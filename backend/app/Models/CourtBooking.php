@@ -17,4 +17,9 @@ class CourtBooking extends Model
         'contact_number',
         'status',
     ];
+
+    protected $casts = [
+        'reserve_data_time' => 'datetime',
+        'reserve_date_end' => 'datetime',
+    ];
 }

@@ -16,6 +16,10 @@ class Customer extends Model
         'member_id',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
+
     public function member()
     {
         return $this->belongsTo(Member::class, 'member_id', 'id');

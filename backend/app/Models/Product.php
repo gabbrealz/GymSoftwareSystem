@@ -19,6 +19,10 @@ class Product extends Model
         'stocked_by',
     ];
 
+    protected $casts = [
+        'last_stocked' => 'date',
+    ];
+
     public function stockedBy()
     {
         return $this->belongsTo(Employee::class, 'stocked_by', 'id');

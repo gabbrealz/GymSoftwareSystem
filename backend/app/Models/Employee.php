@@ -23,6 +23,11 @@ class Employee extends Model
         'role',
     ];
 
+    protected $casts = [
+        'hire_date' => 'datetime',
+        'monthly_salary' => 'decimal:2',
+    ];
+
     public function stockedInventories()
     {
         return $this->hasMany(Product::class, 'stocked_by', 'id');

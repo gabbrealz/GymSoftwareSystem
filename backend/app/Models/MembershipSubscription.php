@@ -17,6 +17,11 @@ class MembershipSubscription extends Model
         'member_id',
     ];
 
+    protected $casts = [
+        'date_time_start' => 'datetime',
+        'date_time_out' => 'datetime',
+    ];
+
     public function plan()
     {
         return $this->belongsTo(MembershipPlan::class, 'plan_id', 'id');
