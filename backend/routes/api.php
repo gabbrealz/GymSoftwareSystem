@@ -7,8 +7,12 @@ use App\Http\Controllers\ManagerController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:sanctum')->group(function() {
 
-Route::middleware('auth:sanctum')->post('/create-employee', [ManagerController::class, 'create_employee']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-Route::middleware('auth:sanctum')->post('/get-employees', [ManagerController::class, 'get_employees']);
+    Route::get('/employees', [ManagerController::class, 'get_employees']);
+    Route::get('/employees/{employee}', [ManagerController::class, 'get_employee']);
+    Route::post('/employees', [ManagerController::class, 'create_employee']);
+
+});
