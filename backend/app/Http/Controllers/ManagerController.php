@@ -38,4 +38,13 @@ class ManagerController extends Controller
             return response()->json(['message' => 'Something went wrong'], 500);
         }
     }
+
+    public function get_employees() {
+        try {
+            return response()->json(Employee::all());
+        }
+        catch (\Exception $e) {
+            return response()->json(['message' => 'Something went wrong'], 500);
+        }
+    }
 }
