@@ -6,6 +6,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 const Dashboard = ({ onLogout }) => {
   const items = [
     { id: 'dashboard', label: 'Dashboard' },
+    { id: 'gym logs', label: 'Gym Logs' },
     { id: 'member list', label: 'Member List' },
     { id: 'employee list', label: 'Employee List' },
     { id: 'product inventory', label: 'Product Inventory' },
@@ -78,10 +79,9 @@ const Dashboard = ({ onLogout }) => {
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 items-start">
                 <div className="bg-[#303030] p-6 rounded-[10px] shadow-lg border border-white/5">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-200">Current Active Members</h2>
+                    <h2 className="text-xl font-semibold mb-4 text-gray-200">Weekly Gym Logs</h2>
                     <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 rounded-full bg-[#00ff00] shadow-[0_0_8px_rgba(0,255,0,0.5)]"></div>
-                        <p className="text-lg text-white">Ari</p>
+                        <p className="text-lg text-white">Ari - Member</p>
                     </div>
                 </div>
                 
