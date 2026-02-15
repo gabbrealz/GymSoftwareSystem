@@ -1,42 +1,126 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@import "tailwindcss";
+
+.bg-full {
+  background-image: url('/LoginBG.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.full-screen {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.sidebar {
+  width: 220px;
+  background-color: rgba(119, 14, 0, 0.836); 
+  color: white;
+  padding: 16px;
+  padding-top: 72px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+  position: fixed;
+  top: 0;
+  left: -260px;
+  height: 100vh;
+  z-index: 50;
+  transition: left 220ms ease, opacity 200ms ease;
+  opacity: 0.98;
+}
+
+.sidebar.visible {
+  left: 0;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  -webkit-scrollbar: none;
+  -ms-overflow-style: none; 
+}
+
+.sidebar-list::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 180ms ease, transform 120ms ease;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logout {
+  margin-top: auto;
+  padding: 10px 12px;
+  background-color: #9b1f1f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.sidebar-label {
+  font-size: 16px;
+}
+
+.sidebar-item:hover,
+.sidebar-item:focus {
+  background-color: rgba(255,255,255,0.06);
+  transform: translateX(4px);
+}
+
+.menu-trigger {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 60;
+  transition: background 150ms ease, transform 120ms ease;
+}
+
+.menu-trigger:hover {
+  background: rgba(255,255,255,0.06);
+  transform: translateX(2px);
+}
+
+.main-shifted {
+  margin-left: 220px;
+  transition: margin-left 220ms ease;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
   }
-  to {
-    transform: rotate(360deg);
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    margin: 0;
+    padding: 0;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }
