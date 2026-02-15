@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import SidebarNavigation from './components/SidebarNavigation'
+import AttendanceChart from './components/AttendanceChart'
+import InventoryAnalytics from './components/ProductInventory'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
@@ -16,6 +18,7 @@ const Dashboard = ({ onLogout }) => {
 
   const [sidebarVisible, setSidebarVisible] = useState(false)
   const [pinned, setPinned] = useState(false)
+  const [range, setRange] = useState('daily')
 
   const showSidebar = () => setSidebarVisible(true)
   const hideSidebar = () => {
@@ -78,11 +81,21 @@ const Dashboard = ({ onLogout }) => {
             <h1 className="text-[48px] font-bold mb-8">Dashboard</h1>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 items-start">
-                <div className="bg-[#303030] p-6 rounded-[10px] shadow-lg border border-white/5">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-200">Weekly Gym Logs</h2>
-                    <div className="flex items-center gap-3">
-                        <p className="text-lg text-white">Ari - Member</p>
+                <div className="bg-[#303030] p-6 rounded-[10px] shadow-lg border border-white/5 mb-10">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold text-gray-200">Gym Logs</h2>
+
+                        <select
+                            className="bg-[#1f1f1f] text-white px-3 py-1 rounded-md border border-white/10 focus:outline-none"
+                            onChange={(e) => setRange(e.target.value)}
+                            value={range}
+                        >
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                        </select>
                     </div>
+
+                    <AttendanceChart range={range} />
                 </div>
                 
                 <div className="bg-[#303030] p-6 rounded-[10px] shadow-lg border border-white/5">
@@ -103,6 +116,13 @@ const Dashboard = ({ onLogout }) => {
                             ]}
                         />
                     </div>
+                </div>
+
+                <div className="bg-[#303030] p-6 rounded-[10px] shadow-lg border border-white/5 mb-10">
+                    <h2 className="text-xl font-semibold mb-4 text-gray-200">
+                        Product Inventory
+                    </h2>
+                    <InventoryAnalytics />
                 </div>
             </div>
         </main>
