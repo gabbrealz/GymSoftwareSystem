@@ -11,10 +11,6 @@ class ManagerController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct() {
-        $this->authorizeResource(Employee::class, 'employee');
-    }
-
     public function create_employee(Request $request) {
         $this->authorize('create', Employee::class);
 
