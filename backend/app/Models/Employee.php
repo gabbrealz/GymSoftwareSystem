@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 
-class Employee extends Model
+class Employee extends Authenticatable
 {
-    use HasApiTokens;
+    use HasApiTokens, Notifiable;
 
     protected $table = 'Employee';
     protected $primaryKey = 'id';
@@ -15,12 +16,21 @@ class Employee extends Model
 
     protected $fillable = [
         'username',
-        'password',
         'email',
         'contact_number',
         'hire_date',
         'monthly_salary',
         'role',
+    ];
+
+    protected $hidden = [
+        'password',
+    ];
+
+    protected $casts = [
+        'password' => 'hashed',
+        'hire_date' => 'datetime',
+        'monthly_salary' => 'decimal:2',
     ];
 
     public function stockedInventories()

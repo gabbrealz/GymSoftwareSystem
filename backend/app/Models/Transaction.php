@@ -18,6 +18,10 @@ class Transaction extends Model
         'recorded_by',
     ];
 
+    protected $casts = [
+        'date_time' => 'datetime',
+    ];
+
     public function recordedBy()
     {
         return $this->belongsTo(Employee::class, 'recorded_by', 'id');

@@ -17,6 +17,12 @@ class WorkoutSession extends Model
         'payment_amount',
     ];
 
+    protected $casts = [
+        'payment_amount' => 'decimal:2',
+        'date_time_in' => 'datetime',
+        'date_time_out' => 'datetime',
+    ];
+
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');

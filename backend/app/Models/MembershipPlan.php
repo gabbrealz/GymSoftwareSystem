@@ -17,6 +17,10 @@ class MembershipPlan extends Model
         'session_rate',
     ];
 
+    protected $casts = [
+        'session_rate' => 'decimal:2',
+    ];
+
     public function subscriptions()
     {
         return $this->hasMany(MembershipSubscription::class, 'plan_id', 'id');
