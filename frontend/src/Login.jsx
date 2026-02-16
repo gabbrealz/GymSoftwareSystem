@@ -17,7 +17,7 @@ const LoginForm = ({ onLogin }) => {
       >
         <div className="text-center mb-[10px]">
           <img 
-            src="/SertfitLogo.png" 
+            src="./SertfitLogo.png" 
             alt="SertfitLogo" 
             className="w-[250px] h-auto" 
           />

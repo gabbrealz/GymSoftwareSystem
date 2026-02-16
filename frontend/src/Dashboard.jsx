@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import SidebarNavigation from './components/SidebarNavigation'
 import AttendanceChart from './components/AttendanceChart'
 import InventoryAnalytics from './components/ProductInventory'
+import Member from './components/Member'
 import Employee from './components/Employee'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -99,6 +100,8 @@ const Dashboard = ({ onLogout }) => {
             )}
 
             {activeItem === 'employee list' && <Employee />}
+            {activeItem === 'member list' && <Member />}
+            
         </main>
     </div>
   )
