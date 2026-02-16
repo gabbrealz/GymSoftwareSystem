@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use App\Models\Employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class EmployeeFactory extends Factory
 {
@@ -13,9 +14,12 @@ class EmployeeFactory extends Factory
 
     public function definition(): array
     {
+        $username = $this->faker->name();
+        $email = Str::slug($username) . '@employee.sertfit.com';
+
         return [
-            'username' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'username' => $username,
+            'email' => $email,
             'password' => 'Password123',
             'contact_number' => Arr::random(['09671234567','09123456789','09671236712','09123676712']),
             'hire_date' => Carbon::now(),
