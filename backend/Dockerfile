@@ -17,8 +17,7 @@ RUN composer install --no-dev --optimize-autoloader
 
 RUN chown -R www-data:www-data storage bootstrap/cache
 EXPOSE 80
-CMD php artisan migrate && \
-    php artisan storage:link || true && \
+CMD php artisan storage:link || true && \
     php artisan config:cache && \
     php artisan route:cache && \
     apache2-foreground
