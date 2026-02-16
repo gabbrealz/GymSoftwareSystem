@@ -16,3 +16,9 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/employees', [ManagerController::class, 'create_employee']);
 
 });
+
+Route::fallback(function () {
+    return response()->json([
+        'message' => 'Endpoint not found.'
+    ], 404);
+});
