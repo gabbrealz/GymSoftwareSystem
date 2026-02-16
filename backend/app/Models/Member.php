@@ -17,11 +17,17 @@ class Member extends Model
         'contact_number',
         'email',
         'address',
+        'plan_type'
     ];
 
     public function customers()
     {
         return $this->hasMany(Customer::class, 'member_id', 'id');
+    }
+
+    public function plan()
+    {
+        return $this->belongsTo(MembershipPlan::class, 'plan_type', 'id');
     }
 
     public function subscriptions()
