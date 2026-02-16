@@ -1,8 +1,7 @@
 FROM php:8.5-apache
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-RUN apt-get update && apt-get install -y libpq-dev git unzip zip && \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+    apt-get update && apt-get install -y libpq-dev git unzip zip && \
     docker-php-ext-install pdo pdo_pgsql && \
     rm -rf /var/lib/apt/lists/* && a2enmod rewrite && \
     sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf && \
