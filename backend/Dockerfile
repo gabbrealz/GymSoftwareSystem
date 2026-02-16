@@ -19,5 +19,5 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 EXPOSE 80
 CMD php artisan storage:link || true && \
     php artisan config:cache && \
-    php route:cache && \
+    php artisan route:cache && \
     apache2-foreground
