@@ -44,6 +44,7 @@ class ManagerController extends Controller
             return response()->json(['message' => 'Validation failed'], 422);
         }
         catch (\Exception $e) {
+            error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
         }
     }
@@ -55,6 +56,7 @@ class ManagerController extends Controller
             return response()->json(Employee::all());
         }
         catch (\Exception $e) {
+            error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
         }
     }
@@ -66,6 +68,7 @@ class ManagerController extends Controller
             return response()->json($employee);
         }
         catch (\Exception $e) {
+            error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
         }
     }

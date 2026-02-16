@@ -13,7 +13,7 @@ class AuthController extends Controller
         try {
             $data = $request->validate([
                 'email' => 'required|email',
-                'password' => 'required|min:8',
+                'password' => 'required',
             ]);
     
             $employee = Employee::where('email', $data['email'])->first();
@@ -28,6 +28,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Validation failed'], 422);
         }
         catch (\Exception $e) {
+            error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
         }
 
@@ -42,6 +43,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Validation failed'], 422);
         }
         catch (\Exception $e) {
+            error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
         }
 
