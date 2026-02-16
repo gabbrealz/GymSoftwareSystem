@@ -1,16 +1,20 @@
 services:
   server:
-    build: backend
-    image: sertfit-img
-    container_name: sertfit
+    build:
+      context: .
+      dockerfile: dev.dockerfile
+    image: sertfit-dev-img
+    container_name: sertfit-dev
     env_file:
-      - backend/.env
+      - ./backend/.env
     environment:
       DB_HOST: pgdb
     networks:
       - sertfit-network
     ports:
       - "80:80"
+    volumes:
+      - ./backend:/var/www
     depends_on:
       pgdb:
         condition: service_healthy
