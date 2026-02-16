@@ -16,7 +16,7 @@ const SidebarNavigation = ({ items = [], onSelect, className = '', onLogout, onT
         onClick={onTrigger}
       >
         <img 
-          src="/SertfitLogo.png" 
+          src="./SertfitLogo.png" 
           alt="Sertfit Logo" 
           style={{ width: '50px', height: '50px', objectFit: 'contain', borderRadius: '50%', backgroundColor: 'transparent' }}
         />
