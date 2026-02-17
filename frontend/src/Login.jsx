@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
 const LoginForm = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin();
+    onLogin(e);
   };
 
   return (
@@ -24,14 +24,16 @@ const LoginForm = ({ onLogin }) => {
         </div>
         
         <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full p-3 text-base rounded-[20px] border border-[#ccc] bg-white"
           required
         />
         <input
+          name="password"
           type="password"
           placeholder="Password"
           value={password}
