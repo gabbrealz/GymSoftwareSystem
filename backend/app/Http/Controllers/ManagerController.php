@@ -51,16 +51,7 @@ class ManagerController extends Controller
                 'monthly_salary' => 'bail|required|numeric|gt:0',
             ]);
     
-            Employee::create([
-                'username' => $data['username'],
-                'email' => $data['email'],
-                'password' => $data['password'],
-                'contact_number' => $data['contact_number'],
-                'address' => $data['address'],
-                'hire_date' => $data['hire_date'],
-                'monthly_salary' => $data['monthly_salary'],
-                'role' => 'Employee'
-            ]);
+            Employee::create([...$data, 'role' => 'Employee']);
 
             Cache::forget('employees');
             return response()->json(['message' => 'Employee created successfully'], 201);
