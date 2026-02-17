@@ -1,26 +1,136 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AddEmployee from './AddEmployee';
 
-const initialEmployees = [
-  { name: 'June Benedict R. Malabanan', email: 'june.malabanan@sertfit.com', address: 'Western Bicutan, Taguig City', contact: '09123456789', salary: '25,000', dateHired: '18/6/2023' },
-  { name: 'Christian Gabriel P. Agot', email: 'gabb.agot@sertfit.com', address: 'Malibay, Pasay City', contact: '09129876543', salary: '20,000', dateHired: '12/7/2023' },
-  { name: 'Ariana May F. Saromo', email: 'ariana.saromo@sertfit.com', address: 'San Isidro, Makati City', contact: '09125551234', salary: '18,000', dateHired: '15/12/2023' }
-];
-
 const Employee = () => {
-  const [employees, setEmployees] = useState(initialEmployees);
+  const [employees, setEmployees] = useState([]);
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
 
-  const handleSaveEmployee = (data) => {
-    if (editingEmployee) {
-      setEmployees(prev => prev.map(emp => 
-        emp.email === editingEmployee.email ? data : emp
-      ));
-    } else {
-      setEmployees(prev => [...prev, data]);
+  useEffect(() => {
+    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+    if (token === null) return;
+
+    const fetchData = async () => {
+      let res, data;
+      try {
+        res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/employees`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": "application/json"
+          }
+        });
+        data = await res.json();
+
+        if (res.ok) {
+          console.log(data);
+          setEmployees(data);
+        }
+        else {
+          console.log(data.message);
+        }
+      }
+      catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSaveEmployee = (formData) => {
+    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+    if (token === null) return;
+
+    const previousEmployees = employees;
+    let res, data;
+    
+    const fetchData = editingEmployee ?
+    async () => {
+      setEmployees(prev => prev.map(emp => emp.id === editingEmployee.id ? formData : emp));
+
+      try {
+        res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/employees/${formData.id}`, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(formData)
+        });
+        data = res.json();
+
+        if (!res.ok) {
+          setEmployees(previousEmployees);
+          console.log(data.message);
+          if ("errors" in data) console.log(data.errors);
+        }
+      }
+      catch (error) {
+        setEmployees(previousEmployees);
+        console.error(error);
+      }
     }
+    :
+    async () => {
+      try {
+        setEmployees(prev => [...prev, formData]);
+
+        res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/employees`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(formData)
+        });
+        data = await res.json();
+
+        if (!res.ok) {
+          setEmployees(previousEmployees);
+          console.log(data.message);
+          if ("errors" in data) console.log(data.errors);
+        }
+      }
+      catch (error) {
+        setEmployees(previousEmployees);
+        console.error(error);
+      }
+    };
+
+    fetchData();
     setEditingEmployee(null);
+  };
+
+  const handleDeleteEmployee = async (employeeId) => {
+    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+    if (token === null) return;
+
+    const previousEmployees = employees;
+
+    setEmployees(prev => prev.filter(emp => emp.id !== employeeId));
+    let res, data;
+
+    try {
+      res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/employees/${employeeId}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/json"
+        }
+      });
+      data = await res.json();
+
+      if (!res.ok) {
+        setEmployees(previousEmployees);
+      }
+    }
+    catch (error) {
+      setEmployees(previousEmployees);
+      console.error(error);
+    }
   };
 
   const openEditModal = (employee) => {
@@ -56,9 +166,10 @@ const Employee = () => {
               <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Name</th>
               <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Email</th>
               <th className='text-left px-6 py-4 font-semibold text-gray-200 tracking-wide'>Address</th>
-              <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Contact Number</th>
+              <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Contact No.</th>
               <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Salary</th>
               <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Hire Date</th>
+              <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Position</th>
               <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide"></th>
             </tr>
           </thead>
@@ -69,15 +180,14 @@ const Employee = () => {
               </tr>
             ) : (
               employees.map((emp, index) => (
-                <tr
-                  key={index}
-                  className="transition-colors duration-150 hover:bg-white/5 border-b border-white/5 last:border-none">
-                  <td className="px-6 py-4 font-medium text-white">{emp.name}</td>
+                <tr key={emp.id} className="transition-colors duration-150 hover:bg-white/5 border-b border-white/5 last:border-none">
+                  <td className="px-6 py-4 font-medium text-white">{emp.username}</td>
                   <td className="px-6 py-4 text-gray-300">{emp.email}</td>
                   <td className="px-6 py-4 text-gray-300">{emp.address}</td>
-                  <td className="px-6 py-4 text-gray-300">{emp.contact}</td>
-                  <td className="px-6 py-4 text-gray-300 font-medium">{emp.salary}</td>
-                  <td className="px-6 py-4 text-gray-300">{emp.dateHired}</td>
+                  <td className="px-6 py-4 text-gray-300">{emp.contact_number}</td>
+                  <td className="px-6 py-4 text-gray-300 font-medium">{emp.monthly_salary}</td>
+                  <td className="px-6 py-4 text-gray-300 whitespace-nowrap">{emp.hire_date}</td>
+                  <td className="px-6 py-4 text-gray-300">{emp.role}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <button 
@@ -91,7 +201,7 @@ const Employee = () => {
                       <button
                         className="text-gray-400 hover:text-red-400 transition-colors duration-150"
                         title="Delete"
-                        onClick={() => setEmployees(prev => prev.filter((_, i) => i !== index))}>
+                        onClick={() => handleDeleteEmployee(emp.id)}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                         </svg>

@@ -1,27 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const AddEmployee = ({ isOpen, onClose, onAdd, initialData }) => {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
-        name: '',
+        username: '',
         email: '',
         address: '',
-        contact: '',
-        salary: '',
-        dateHired: '',
+        contact_number: '',
+        monthly_salary: '',
+        hire_date: '',
         password: '',
-        confirmPassword: '',
+        password_confirmation: '',
     });
 
     useEffect(() => {
         if (initialData) {
-            setFormData({
-            ...initialData,
-            password: '', 
-            confirmPassword: ''
-        });
+            setFormData({...initialData, password: '', password_confirmation: ''});
         } else {
-        setFormData({ name: '', email: '', address: '', contact: '', salary: '', dateHired: '', password: '', confirmPassword: '' });
+            setFormData({ 
+                username: '', email: '', address: '', contact_number: '',monthly_salary: '',
+                hire_date: '', password: '', password_confirmation: ''
+            });
         }
         setStep(1);
     }, [initialData, isOpen]);
@@ -35,21 +34,12 @@ const AddEmployee = ({ isOpen, onClose, onAdd, initialData }) => {
     const handleBack = () => setStep(1);
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (formData.password !== formData.confirmPassword) {
-        alert("Passwords do not match!");
-        return;
+        if (formData.password !== formData.password_confirmation) {
+            alert("Passwords do not match!");
+            return;
         }
 
-        const formattedSalary = formData.salary
-        ? (formData.salary.startsWith('₱') ? formData.salary : `₱${formData.salary}`)
-        : '';
-
-        const finalData = {
-        ...formData,
-        salary: formattedSalary,
-        };
-
-        if (onAdd) onAdd(finalData);
+        if (onAdd) onAdd(formData);
         onClose();
     };
 
@@ -76,12 +66,12 @@ const AddEmployee = ({ isOpen, onClose, onAdd, initialData }) => {
             {step === 1 && (
                 <div className="space-y-4">
                 {[
-                    { label: 'Name', name: 'name', type: 'text', placeholder: 'e.g. Roycee Hugh M. Lacuesta' },
+                    { label: 'Name', name: 'username', type: 'text', placeholder: 'e.g. Roycee Hugh M. Lacuesta' },
                     { label: 'Email', name: 'email', type: 'email', placeholder: 'e.g. roycee.lacuesta@sertfit.com' },
                     { label: 'Address', name: 'address', type: 'text', placeholder: 'Enter home address' },
-                    { label: 'Contact', name: 'contact', type: 'tel', placeholder: 'e.g. 09123456789' },
-                    { label: 'Salary', name: 'salary', type: 'text', placeholder: 'e.g. 25000' },
-                    { label: 'Date Hired', name: 'dateHired', type: 'date' },
+                    { label: 'Contact', name: 'contact_number', type: 'tel', placeholder: 'e.g. 09123456789' },
+                    { label: 'Salary', name: 'monthly_salary', type: 'text', placeholder: 'e.g. 25000' },
+                    { label: 'Date Hired', name: 'hire_date', type: 'date' },
                 ].map((field) => (
                     <div key={field.name}>
                     <label className="block text-xs font-semibold text-gray-400 uppercase mb-1.5">{field.label}</label>
@@ -122,8 +112,8 @@ const AddEmployee = ({ isOpen, onClose, onAdd, initialData }) => {
                     <label className="block text-xs font-semibold text-gray-400 uppercase mb-1.5">Confirm Password</label>
                     <input
                     type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
+                    name="password_confirmation"
+                    value={formData.password_confirmation}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 bg-[#303030cc] text-white rounded-[8px] border border-white/10 focus:border-[#770e00] outline-none transition-all"/>
