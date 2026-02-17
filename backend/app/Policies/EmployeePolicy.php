@@ -14,7 +14,7 @@ class EmployeePolicy
 
     public function view(Employee $auth_employee, Employee $employee): bool
     {
-        return $auth_employee->id === $employee->id;
+        return $auth_employee->id === $employee->id || $auth_employee->role === 'Manager';
     }
 
     public function create(Employee $auth_employee): bool
@@ -24,7 +24,7 @@ class EmployeePolicy
 
     public function update(Employee $auth_employee, Employee $employee): bool
     {
-        return $auth_employee->id === $employee->id;
+        return $auth_employee->id === $employee->id || $auth_employee->role === 'Manager';
     }
 
     public function delete(Employee $auth_employee, Employee $employee): bool
