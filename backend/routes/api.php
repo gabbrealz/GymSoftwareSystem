@@ -15,7 +15,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/employees/{employee}', [ManagerController::class, 'get_employee']);
     Route::post('/employees', [ManagerController::class, 'create_employee']);
     Route::put('/employees/{employee}', [ManagerController::class, 'update_employee']);
-
+    Route::delete('/employees/{employee}', [ManagerController::class, 'delete_employee']);
 });
 
 Route::fallback(function () {
