@@ -3,9 +3,9 @@ import AttendanceChart from './AttendanceChart';
 import AddLog from './AddLog';
 
 const initialLogs = [
-    { id: '001', name: 'June Benedict R. Malabanan', timestamp: '02/17/2026 08:30 AM', memberId: '12345' },
-    { id: '002', name: 'Christian Gabriel P. Agot', timestamp: '02/17/2026 09:00 AM', memberId: '67890' },
-    { id: '003', name: 'Ariana May F. Saromo', timestamp: '02/17/2026 10:00 AM', memberId: '' }
+    { id: '001', name: 'June Benedict R. Malabanan', timestamp: '17/02/2026 08:30 AM', customerType: 'Member' },
+    { id: '002', name: 'Christian Gabriel P. Agot', timestamp: '17/02/2026 09:00 AM', customerType: 'Member' },
+    { id: '003', name: 'Ariana May F. Saromo', timestamp: '17/02/2026 10:00 AM', customerType: 'Walk-in' }
 ];
 
 const GymLog = () => {
@@ -14,8 +14,12 @@ const GymLog = () => {
     const [isAddLogOpen, setIsAddLogOpen] = useState(false);
 
     const handleAddLog = (newLog) => {
-        setLogs(prev => [...prev, newLog]);
-    };
+    setLogs(prev => {
+        const nextId = String(prev.length + 1).padStart(3, '0');
+        const entryWithId = { ...newLog, id: nextId };
+        return [...prev, entryWithId];
+    });
+};
 
     return (
         <div className="space-y-10">
@@ -28,7 +32,7 @@ const GymLog = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    Log in
+                    Add Record
                 </button>
             </div>
 
@@ -77,7 +81,7 @@ const GymLog = () => {
                                     <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">ID</th>
                                     <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Name</th>
                                     <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Date & Time</th>
-                                    <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Member ID</th>
+                                    <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Customer Type</th>
                                     <th className="text-left px-6 py-4"></th>
                                 </tr>
                             </thead>
@@ -91,7 +95,7 @@ const GymLog = () => {
                                         <td className="px-6 py-4 font-medium text-white">{log.id}</td>
                                         <td className="px-6 py-4 font-medium text-white">{log.name}</td>
                                         <td className="px-6 py-4 text-gray-300">{log.timestamp}</td>
-                                        <td className="px-6 py-4 text-white">{log.memberId || "Walk-in"}</td>
+                                        <td className="px-6 py-4 text-white">{log.customerType}</td>
                                         <td className="px-6 py-4 text-right">
                                             <button
                                                 onClick={() =>

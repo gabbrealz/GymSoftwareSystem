@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import AddEmployee from './AddEmployee';
 
 const initialEmployees = [
-  { name: 'June Benedict R. Malabanan', email: 'june.malabanan@sertfit.com', address: 'Western Bicutan, Taguig City', contact: '09123456789', salary: '25,000', dateHired: '18/6/2023' },
+  { name: 'June Benedict R. Malabanan', email: 'june.malabanan@sertfit.com', address: 'Western Bicutan, Taguig City', contact: '09123456789', salary: '67,000', dateHired: '18/6/2023' },
   { name: 'Christian Gabriel P. Agot', email: 'gabb.agot@sertfit.com', address: 'Malibay, Pasay City', contact: '09129876543', salary: '20,000', dateHired: '12/7/2023' },
   { name: 'Ariana May F. Saromo', email: 'ariana.saromo@sertfit.com', address: 'San Isidro, Makati City', contact: '09125551234', salary: '18,000', dateHired: '15/12/2023' }
 ];
