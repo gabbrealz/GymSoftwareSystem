@@ -9,6 +9,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     echo "log_errors = On" >> /usr/local/etc/php/conf.d/docker-php-logs.ini && \
     echo "error_log = /proc/self/fd/2" >> /usr/local/etc/php/conf.d/docker-php-logs.ini
 
+COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 WORKDIR /var/www
 
 COPY . .
