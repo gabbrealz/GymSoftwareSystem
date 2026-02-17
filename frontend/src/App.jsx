@@ -29,8 +29,8 @@ function App() {
   }
 
   const handleLogout = async () => {
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME);
-    if (token == null) return;
+    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+    if (token === null) return;
 
     let res, data;
     
