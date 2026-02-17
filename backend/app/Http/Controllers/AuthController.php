@@ -22,8 +22,15 @@ class AuthController extends Controller
             if (!$employee || !Hash::check($data['password'], $employee->password)) {
                 return response()->json(['message' => 'Invalid credentials'], 401);
             }
-    
-            $token = $employee->createToken('sertfit-api-token', expiresAt: Carbon::now()->addHour())->plainTextToken;
+
+            $expiration = Carbon::now()->addHour();
+            $token = $employee->createToken('sertfit-api-token', expiresAt: $expiration)->plainTextToken;
+
+            return response()->json([
+                'employee' => $employee,
+                'token' => $token,
+                'token_expiration' => $expiration,
+            ]);
         }
         catch (ValidationException $e) {
             return response()->json(['message' => 'Validation failed'], 422);
@@ -32,8 +39,6 @@ class AuthController extends Controller
             error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
         }
-
-        return response()->json(['employee' => $employee, 'token' => $token]);
     }
 
     public function logout(Request $request) {
