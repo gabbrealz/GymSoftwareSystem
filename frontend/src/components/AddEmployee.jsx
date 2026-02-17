@@ -66,7 +66,7 @@ const AddEmployee = ({ isOpen, onClose, onAdd, initialData }) => {
             {step === 1 && (
                 <div className="space-y-4">
                 {[
-                    { label: 'Name', name: 'username', type: 'text', placeholder: 'e.g. Roycee Hugh M. Lacuesta' },
+                    { label: 'Full Name', name: 'username', type: 'text', placeholder: 'e.g. Roycee Hugh M. Lacuesta' },
                     { label: 'Email', name: 'email', type: 'email', placeholder: 'e.g. roycee.lacuesta@sertfit.com' },
                     { label: 'Address', name: 'address', type: 'text', placeholder: 'Enter home address' },
                     { label: 'Contact', name: 'contact_number', type: 'tel', placeholder: 'e.g. 09123456789' },

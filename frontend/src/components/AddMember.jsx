@@ -74,7 +74,7 @@ const AddMember = ({ isOpen, onClose, onAdd, initialData }) => {
                 Cancel
                 </button>
                 <button type="submit" className="flex-1 py-2 rounded-[8px] text-white font-bold bg-[#770e00] shadow-lg hover:scale-[1.02] transition-all">
-                {initialData ? 'Update' : 'Confirm Add'}
+                {initialData ? 'Update' : 'Add'}
                 </button>
             </div>
             </form>
