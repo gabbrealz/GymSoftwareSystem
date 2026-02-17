@@ -38,7 +38,10 @@ class ManagerController extends Controller
             return response()->json(['message' => 'Employee created successfully'], 201);
         }
         catch (ValidationException $e) {
-            return response()->json(['message' => 'Validation failed'], 422);
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
         }
         catch (\Exception $e) {
             error_log($e->getMessage());
@@ -98,7 +101,10 @@ class ManagerController extends Controller
             if ($employee->isDirty()) $employee->save();
         }
         catch (ValidationException $e) {
-            return response()->json(['message' => 'Validation failed'], 422);
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
         }
         catch (\Exception $e) {
             error_log($e->getMessage());
