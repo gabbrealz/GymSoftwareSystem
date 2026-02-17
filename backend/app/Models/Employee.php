@@ -30,7 +30,7 @@ class Employee extends Authenticatable
 
     protected $casts = [
         'password' => 'hashed',
-        'hire_date' => 'datetime',
+        'hire_date' => 'date',
         'monthly_salary' => 'decimal:2',
     ];
 
