@@ -21,6 +21,7 @@ class ManagerController extends Controller
                 'email' => 'bail|required|email|unique:Employee',
                 'password' => 'bail|required|min:8|string',
                 'contact_number' => 'bail|required|regex:/^09\d{9}$/',
+                'address' => 'bail|required|alpha_num:ascii|max:255',
                 'hire_date' => 'bail|required|date',
                 'monthly_salary' => 'bail|required|numeric|gt:0',
             ]);
@@ -30,6 +31,7 @@ class ManagerController extends Controller
                 'email' => $data['email'],
                 'password' => $data['password'],
                 'contact_number' => $data['contact_number'],
+                'address' => $data['address'],
                 'hire_date' => $data['hire_date'],
                 'monthly_salary' => $data['monthly_salary'],
                 'role' => 'Employee'
@@ -83,6 +85,7 @@ class ManagerController extends Controller
                 'password' => 'bail|required|min:8|string',
                 'contact_number' => 'bail|required|regex:/^09\d{9}$/',
                 'hire_date' => 'bail|required|date',
+                'address' => 'bail|required|alpha_num:ascii|max:255',
                 'monthly_salary' => 'bail|required|numeric|gt:0',
             ]);
 

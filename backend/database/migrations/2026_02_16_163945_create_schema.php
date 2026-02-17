@@ -61,6 +61,7 @@ return new class extends Migration
                 hire_date date NOT NULL,
                 monthly_salary numeric NOT NULL CHECK (monthly_salary > 0::numeric),
                 role text NOT NULL CHECK (role = ANY (ARRAY['Manager'::text, 'Employee'::text])),
+                address text NOT NULL,
                 CONSTRAINT \"Employee_pkey\" PRIMARY KEY (id)
             );
 
