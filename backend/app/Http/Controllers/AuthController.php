@@ -39,9 +39,6 @@ class AuthController extends Controller
         try {
             $request->user()->currentAccessToken()->delete();
         }
-        catch (ValidationException $e) {
-            return response()->json(['message' => 'Validation failed'], 422);
-        }
         catch (\Exception $e) {
             error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
