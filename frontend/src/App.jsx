@@ -1,10 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import LoginForm from './Login.jsx'
 import Dashboard from './Dashboard.jsx'
 import './App.css'
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME)) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     let res, data;
