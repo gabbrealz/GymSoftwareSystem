@@ -78,7 +78,7 @@ export default function AttendanceChart({ range }) {
     buildChart(sample);
   };
 
-  // 🔥 Build Chart Data
+  // Build Chart Data
   const buildChart = (data) => {
     setChartData({
       labels: data.map((item) => item.date),
