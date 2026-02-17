@@ -17,7 +17,7 @@ class ManagerController extends Controller
         $this->authorize('viewAny', Employee::class);
 
         try {
-            return response()->json(Employee::all());
+            return response()->json(Cache::remember('employees', 600, fn() => Employee::all()));
         }
         catch (\Exception $e) {
             error_log($e->getMessage());
@@ -62,6 +62,7 @@ class ManagerController extends Controller
                 'role' => 'Employee'
             ]);
 
+            Cache::forget('employees');
             return response()->json(['message' => 'Employee created successfully'], 201);
         }
         catch (ValidationException $e) {
@@ -102,7 +103,10 @@ class ManagerController extends Controller
             unset($data['password']);
 
             $employee->fill($data);
-            if ($employee->isDirty()) $employee->save();
+            if ($employee->isDirty()) {
+                $employee->save();
+                Cache::forget('employees');
+            }
         }
         catch (ValidationException $e) {
             return response()->json([
@@ -121,10 +125,13 @@ class ManagerController extends Controller
 
         try {
             $employee->delete();
+            Cache::forget('employees');
         }
         catch (\Exception $e) {
             error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
         }
+
+
     }
 }
