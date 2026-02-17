@@ -17,11 +17,11 @@ class ManagerController extends Controller
 
         try {
             $data = $request->validate([
-                'username' => 'bail|required|alpha_num:ascii|max:255',
+                'username' => 'bail|required|max:255|regex:/^\w+(\s\w+)*$/i',
                 'email' => 'bail|required|email|unique:Employee',
                 'password' => 'bail|required|min:8|string|confirmed',
                 'contact_number' => 'bail|required|regex:/^09\d{9}$/',
-                'address' => 'bail|required|alpha_num:ascii|max:255',
+                'address' => 'bail|required|max:255|regex:/^[0-9a-zÀ-ÿ.,#\'\/\-]+(?:\s[0-9a-zÀ-ÿ.,#\'\/\-]+)*$/i',
                 'hire_date' => 'bail|required|date',
                 'monthly_salary' => 'bail|required|numeric|gt:0',
             ]);
@@ -80,12 +80,12 @@ class ManagerController extends Controller
 
         try {
             $data = $request->validate([
-                'username' => 'bail|required|alpha_num:ascii|max:255',
+                'username' => 'bail|required|max:255|regex:/^\w+(\s\w+)*$/i',
                 'email' => 'bail|required|email',
                 'password' => 'bail|required|min:8|string|confirmed',
                 'contact_number' => 'bail|required|regex:/^09\d{9}$/',
                 'hire_date' => 'bail|required|date',
-                'address' => 'bail|required|alpha_num:ascii|max:255',
+                'address' => 'bail|required|max:255|regex:/^[0-9a-zÀ-ÿ.,#\'\/\-]+(?:\s[0-9a-zÀ-ÿ.,#\'\/\-]+)*$/i',
                 'monthly_salary' => 'bail|required|numeric|gt:0',
             ]);
 
