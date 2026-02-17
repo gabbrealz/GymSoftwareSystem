@@ -19,7 +19,7 @@ class ManagerController extends Controller
             $data = $request->validate([
                 'username' => 'bail|required|alpha_num:ascii|max:255',
                 'email' => 'bail|required|email|unique:Employee',
-                'password' => 'bail|required|min:8|string',
+                'password' => 'bail|required|min:8|string|confirmed',
                 'contact_number' => 'bail|required|regex:/^09\d{9}$/',
                 'address' => 'bail|required|alpha_num:ascii|max:255',
                 'hire_date' => 'bail|required|date',
@@ -82,7 +82,7 @@ class ManagerController extends Controller
             $data = $request->validate([
                 'username' => 'bail|required|alpha_num:ascii|max:255',
                 'email' => 'bail|required|email',
-                'password' => 'bail|required|min:8|string',
+                'password' => 'bail|required|min:8|string|confirmed',
                 'contact_number' => 'bail|required|regex:/^09\d{9}$/',
                 'hire_date' => 'bail|required|date',
                 'address' => 'bail|required|alpha_num:ascii|max:255',
