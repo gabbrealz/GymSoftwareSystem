@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Employee;
@@ -11,6 +12,30 @@ use Illuminate\Validation\ValidationException;
 class ManagerController extends Controller
 {
     use AuthorizesRequests;
+
+    public function get_employees() {
+        $this->authorize('viewAny', Employee::class);
+
+        try {
+            return response()->json(Employee::all());
+        }
+        catch (\Exception $e) {
+            error_log($e->getMessage());
+            return response()->json(['message' => 'Something went wrong'], 500);
+        }
+    }
+
+    public function get_employee(Employee $employee) {
+        $this->authorize('view', $employee);
+
+        try {
+            return response()->json($employee);
+        }
+        catch (\Exception $e) {
+            error_log($e->getMessage());
+            return response()->json(['message' => 'Something went wrong'], 500);
+        }
+    }
 
     public function create_employee(Request $request) {
         $this->authorize('create', Employee::class);
@@ -44,30 +69,6 @@ class ManagerController extends Controller
                 'message' => 'Validation failed',
                 'errors' => $e->errors(),
             ], 422);
-        }
-        catch (\Exception $e) {
-            error_log($e->getMessage());
-            return response()->json(['message' => 'Something went wrong'], 500);
-        }
-    }
-
-    public function get_employees() {
-        $this->authorize('viewAny', Employee::class);
-
-        try {
-            return response()->json(Employee::all());
-        }
-        catch (\Exception $e) {
-            error_log($e->getMessage());
-            return response()->json(['message' => 'Something went wrong'], 500);
-        }
-    }
-
-    public function get_employee(Employee $employee) {
-        $this->authorize('view', $employee);
-
-        try {
-            return response()->json($employee);
         }
         catch (\Exception $e) {
             error_log($e->getMessage());
