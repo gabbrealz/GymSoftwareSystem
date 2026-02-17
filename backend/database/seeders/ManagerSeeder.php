@@ -14,6 +14,7 @@ class ManagerSeeder extends Seeder
             'username' => 'Ariana',
             'email' => 'ariana@sertfit.com',
             'password' => '1234567A',
+            'address' => 'my.loveri kingdom',
             'contact_number' => '09123456789',
             'hire_date' => Carbon::now(),
             'monthly_salary' => 50000.00,
