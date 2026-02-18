@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import LoginForm from './Login.jsx'
 import Dashboard from './Dashboard.jsx'
-import './App.css'
+import './App.css'  
+import { NotifContext } from './Context.jsx';
+import Notifications from './components/Notifications.jsx'
 
 function App() {
+  const { addToNotifs } = useContext(NotifContext);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -21,18 +24,35 @@ function App() {
         headers: { "Accept": "application/json" },
         body: new FormData(e.target)
       });
+
       data = await res.json();
 
       if (res.ok && "token" in data) {
         setIsAuthenticated(true);
         localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME, data["token"]);
         localStorage.setItem(import.meta.env.VITE_AUTH_USER_VAR_NAME, data["employee"]);
+
+        addToNotifs({
+          message: "Login successful!",
+          bgcolor: "bg-green-600"
+        });
+
+      } else {
+        addToNotifs({
+          message: data.message || "Invalid email or password.",
+          bgcolor: "bg-red-600"
+        });
       }
-    }
-    catch (error) {
+
+    } catch (error) {
       console.error(error);
+
+      addToNotifs({
+        message: "Server error. Please try again later.",
+        bgcolor: "bg-red-600"
+      });
     }
-  }
+  };
 
   const handleLogout = async () => {
     const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
@@ -59,12 +79,18 @@ function App() {
       }
     }
     catch (error) {
-      console.error(error);   
+      console.error(error);
+      
+      addToNotifs({
+        message: "Server error. Please try again later.",
+        bgcolor: "bg-red-600"
+      });
     }
   }
 
   return (
     <div className="App">
+      <Notifications />
       {isAuthenticated ? (
         <Dashboard onLogout={handleLogout} />
       ) : (

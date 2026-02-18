@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { NotifContext } from '../Context.jsx';
 
 const AddEmployee = ({ isOpen, onClose, onAdd, initialData }) => {
+    const { addToNotifs } = useContext(NotifContext);
     const [step, setStep] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -37,16 +39,43 @@ const AddEmployee = ({ isOpen, onClose, onAdd, initialData }) => {
 
     const handleNext = () => setStep(2);
     const handleBack = () => setStep(1);
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (formData.password !== formData.password_confirmation) {
-            alert("Passwords do not match!");
+            addToNotifs({
+                message: "Passwords do not match.",
+                bgcolor: "bg-red-600"
+            });
             return;
         }
 
-        if (onAdd) onAdd(formData);
-        onClose();
-    };
+        try {
+            if (onAdd) {
+                const result = await onAdd(formData);
+                if (result?.success) {
+                    addToNotifs({
+                        message: result.message || "Failed to add employee.",
+                        bgcolor: "bg-red-600"
+                    });
+                    return;
+                }
+            }
+
+            addToNotifs({
+                message: initialData ? "Employee updated successfully!" : "Employee added successfully!",
+                bgcolor: "bg-green-600"
+            });
+
+            onClose();
+
+        } catch (error) {
+            console.error(error);
+            addToNotifs({
+                message: "Server error. Please try again later.",
+                bgcolor: "bg-red-600"
+            });
+        }
+    }
 
     if (!isOpen) return null;
 
