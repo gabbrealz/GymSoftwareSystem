@@ -40,7 +40,7 @@ class GymLogController extends Controller
         try {
             $data = $request->validate([
                 'name' => 'bail|required|max:255|regex:/^\w+(\s\w+)*$/i',
-                'email' => 'bail|nullable|email|unique:MemberList',
+                'email' => 'bail|nullable|email|exists:MemberList',
             ]);
 
             $log = DB::transaction(function () use ($data) {
