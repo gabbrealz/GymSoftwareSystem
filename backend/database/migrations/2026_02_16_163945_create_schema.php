@@ -91,9 +91,7 @@ return new class extends Migration
             CREATE TABLE public.\"WorkoutSession\" (
                 id bigint GENERATED ALWAYS AS IDENTITY NOT NULL UNIQUE,
                 date_time_in timestamp without time zone NOT NULL,
-                date_time_out timestamp without time zone NOT NULL,
                 customer_id bigint NOT NULL,
-                payment_amount numeric NOT NULL CHECK (payment_amount > 0::numeric),
                 CONSTRAINT \"WorkoutSession_pkey\" PRIMARY KEY (id),
                 CONSTRAINT \"WorkoutSession_customer_id_fkey\" FOREIGN KEY (customer_id) REFERENCES public.\"Customer\"(id)
             );
