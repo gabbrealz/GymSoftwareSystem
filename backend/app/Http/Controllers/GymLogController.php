@@ -18,7 +18,8 @@ class GymLogController extends Controller
             return response()->json(Cache::remember('gym_logs', 600, fn() =>
                 DB::select("
                     SELECT
-                        w.date_time_in AS date_and_time,
+                        c.id,
+                        w.date_time_in AS timestamp,
                         c.name,
                         CASE
                             WHEN c.member_id IS NULL THEN \"Walk-in\"
@@ -42,7 +43,7 @@ class GymLogController extends Controller
                 'email' => 'bail|nullable|email|unique:MemberList',
             ]);
 
-            DB::transaction(function () use ($data) {
+            $log = DB::transaction(function () use ($data) {
                 $customer = Customer::create([
                     'name' => $data['name'],
                     'created_at' => Carbon::now(),
@@ -51,7 +52,7 @@ class GymLogController extends Controller
                         : null
                 ]);
 
-                WorkoutSession::create([
+                return WorkoutSession::create([
                     'customer_id' => $customer->id,
                     'date_time_in' => $customer->created_at,
                 ]);
@@ -60,6 +61,7 @@ class GymLogController extends Controller
             Cache::forget('gym_logs');
             return response()->json([
                 'message' => 'Workout log created successfully',
+                'new_log' => $log
             ], 201);
         }
         catch (ValidationException $e) {
