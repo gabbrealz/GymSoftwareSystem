@@ -6,7 +6,7 @@ services:
     image: sertfit-dev-img
     container_name: sertfit-dev
     env_file:
-      - ./backend/.env
+      - ./backend/.env.local
     environment:
       DB_HOST: pgdb
     networks:
