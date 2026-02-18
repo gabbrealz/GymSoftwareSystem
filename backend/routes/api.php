@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/members/{member}', [MemberController::class, 'delete_member']);
 
     Route::get('/workout-sessions', [GymLogController::class, 'get_logs']);
-    Route::post('/workout-sessions/{workoutSession}', [GymLogController::class, 'create_log']);
+    Route::post('/workout-sessions', [GymLogController::class, 'create_log']);
     Route::delete('/workout-sessions/{workoutSession}', [GymLogController::class, 'delete_log']);
 });
 
