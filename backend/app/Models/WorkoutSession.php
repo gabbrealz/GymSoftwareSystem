@@ -12,15 +12,11 @@ class WorkoutSession extends Model
 
     protected $fillable = [
         'date_time_in',
-        'date_time_out',
         'customer_id',
-        'payment_amount',
     ];
 
     protected $casts = [
-        'payment_amount' => 'decimal:2',
-        'date_time_in' => 'datetime',
-        'date_time_out' => 'datetime',
+        'date_time_in' => 'datetime:Y-m-d H:i:s',
     ];
 
     public function customer()
