@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 
 class MemberController extends Controller
 {
-    public function get_members(Request $request) {
+    public function get_members() {
         try {
             return response()->json(Cache::remember('members', 600, fn() =>
                 DB::select("
@@ -117,7 +117,7 @@ class MemberController extends Controller
         }
     }
 
-    public function delete_member(Request $request, Member $member) {
+    public function delete_member(Member $member) {
         try {
             $member->delete();
             Cache::forget('members');
