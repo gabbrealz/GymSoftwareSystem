@@ -23,7 +23,6 @@ const Employee = () => {
         data = await res.json();
 
         if (res.ok) {
-          console.log(data);
           setEmployees(data);
         }
         else {
