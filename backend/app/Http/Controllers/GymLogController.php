@@ -74,7 +74,7 @@ class GymLogController extends Controller
         }
     }
 
-    public function delete_log(Request $request, WorkoutSession $workoutSession) {
+    public function delete_log(WorkoutSession $workoutSession) {
         try {
             $workoutSession->delete();
             Cache::forget('gym_logs');
