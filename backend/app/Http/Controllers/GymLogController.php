@@ -22,8 +22,8 @@ class GymLogController extends Controller
                         w.date_time_in AS timestamp,
                         c.name,
                         CASE
-                            WHEN c.member_id IS NULL THEN \"Walk-in\"
-                            ELSE \"Member\"
+                            WHEN c.member_id IS NULL THEN 'Walk-in'
+                            ELSE 'Member'
                         END AS customer_type
                     FROM \"WorkoutSession\" w
                     JOIN \"Customer\" c ON w.customer_id = c.id
@@ -52,10 +52,17 @@ class GymLogController extends Controller
                         : null
                 ]);
 
-                return WorkoutSession::create([
+                $workout_session = WorkoutSession::create([
                     'customer_id' => $customer->id,
                     'date_time_in' => $customer->created_at,
                 ]);
+
+                return [
+                    'id' => $workout_session->id,
+                    'name' => $customer->name,
+                    'timestamp' => $workout_session->date_time_in,
+                    'customer_type' => $data['email'] ? 'Member' : 'Walk-in'
+                ];
             });
 
             Cache::forget('gym_logs');

@@ -15,7 +15,7 @@ const GymLog = () => {
             let res, data;
             
             try {
-                res = fetch(`${import.meta.env.VITE_BACKEND_URL}/workout-sessions`, {
+                res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/workout-sessions`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -37,7 +37,7 @@ const GymLog = () => {
         };
 
         fetchData();
-    });
+    }, []);
 
     const handleAddLog = (formData) => {
         const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
@@ -47,7 +47,7 @@ const GymLog = () => {
             let res, data;
 
             try {
-                res = fetch(`${import.meta.env}/workout-sessions`, {
+                res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/workout-sessions`, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -84,7 +84,7 @@ const GymLog = () => {
             let res, data;
 
             try {
-                res = fetch(`${import.meta.env}/workout-sessions/${log_id}`, {
+                res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/workout-sessions/${log_id}`, {
                     method: "DELETE",
                     headers: {
                         "Authorization": `Bearer ${token}`,
