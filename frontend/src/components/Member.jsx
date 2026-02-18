@@ -2,28 +2,40 @@ import React, { useState } from 'react'
 import AddMember from './AddMember'
 
 const initialMembers = [
-    {id: '12345', name: 'Roycee Hugh M. Lacuesta', email: 'roycee.lacuesta@sertfit.com', address: 'Pasay City', contact: '09123456789', joinDate: '16/02/2026', expiryDate: '16/03/2027'},
+    {id: '001', name: 'Roycee Hugh M. Lacuesta', email: 'roycee.lacuesta@sertfit.com', address: 'Pasay City', contact: '09123456789', membershipPlan: 'VIP', joinDate: '2026-02-16'},
 ]
-
 const Member = () => {
     const [members, setMembers] = useState(initialMembers)
     const [isAddMemberOpen, setIsAddMemberOpen] = useState(false)
     const [editingMember, setEditingMember] = useState(null)
 
     const handleSaveMember = (data) => {
-        if (editingMember) {
+    if (editingMember) {
         setMembers(prev => prev.map(mem => 
-            mem.email === editingMember.email ? data : mem
-        ))
-        } else {
-        setMembers(prev => [...prev, data])
-        }
-        setEditingMember(null)
+            mem.id === editingMember.id ? { ...data, id: mem.id } : mem
+        ));
+    } else {
+        setMembers(prev => {
+            const nextId = String(prev.length + 1).padStart(3, '0');
+            const memberWithId = { ...data, id: nextId };
+            return [...prev, memberWithId];
+        });
     }
+    setEditingMember(null);
+    setIsAddMemberOpen(false);
+};
 
     const openEditModal = (member) => {
         setEditingMember(member)
         setIsAddMemberOpen(true)
+    }
+
+    const handleAddMember = (newMember) => {
+        setMembers(prev => {
+            const nextId = String(prev.length + 1).padStart(3, '0');
+            const memberWithId = { ...newMember, id: nextId };
+            return [...prev, memberWithId];
+        });
     }
 
     return (
@@ -56,6 +68,7 @@ const Member = () => {
                 <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Email</th>
                 <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Address</th>
                 <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Contact</th>
+                <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Membership Plan</th>
                 <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Join Date</th>
                 <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Expiry Date</th>
                 <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide"></th>
@@ -69,6 +82,7 @@ const Member = () => {
                     <td className="px-6 py-4 text-gray-300">{mem.email}</td>
                     <td className="px-6 py-4 text-gray-300">{mem.address}</td>
                     <td className="px-6 py-4 text-gray-300">{mem.contact}</td>
+                    <td className="px-6 py-4 text-gray-300">{mem.membershipPlan}</td>
                     <td className="px-6 py-4 text-gray-300">{mem.joinDate}</td>
                     <td className="px-6 py-4 text-gray-300">{mem.expiryDate}</td>
                     <td className="px-6 py-4 text-right">
