@@ -21,19 +21,8 @@ const AddLog = ({ isOpen, onClose, onAdd }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
-        const now = new Date();
-        const day = String(now.getDate()).padStart(2, '0');
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const year = now.getFullYear();
-        const time = now.toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-        const timestamp = `${day}/${month}/${year} ${time}`;
 
-        onAdd({ 
-            ...formData, 
-            timestamp, 
-            customerType 
-        });
+        onAdd({ ...formData, customerType });
         onClose();
     };
 

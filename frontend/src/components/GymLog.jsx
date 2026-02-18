@@ -1,25 +1,112 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AttendanceChart from './AttendanceChart';
 import AddLog from './AddLog';
 
-const initialLogs = [
-    { id: '001', name: 'June Benedict R. Malabanan', timestamp: '17/02/2026 08:30 AM', customerType: 'Member' },
-    { id: '002', name: 'Christian Gabriel P. Agot', timestamp: '17/02/2026 09:00 AM', customerType: 'Member' },
-    { id: '003', name: 'Ariana May F. Saromo', timestamp: '17/02/2026 10:00 AM', customerType: 'Walk-in' }
-];
-
 const GymLog = () => {
-    const [logs, setLogs] = useState(initialLogs);
+    const [logs, setLogs] = useState([]);
     const [range, setRange] = useState('daily');
     const [isAddLogOpen, setIsAddLogOpen] = useState(false);
 
-    const handleAddLog = (newLog) => {
-    setLogs(prev => {
-        const nextId = String(prev.length + 1).padStart(3, '0');
-        const entryWithId = { ...newLog, id: nextId };
-        return [...prev, entryWithId];
+    useEffect(() => {
+        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+        if (token === null) return;
+
+        const fetchData = async () => {
+            let res, data;
+            
+            try {
+                res = fetch(`${import.meta.env.VITE_BACKEND_URL}/workout-sessions`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json"
+                    }
+                });
+                data = await res.json();
+
+                if (res.ok) {
+                    setLogs(data);
+                }
+                else {
+                    console.log(data.message);
+                }
+            }
+            catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
     });
-};
+
+    const handleAddLog = (formData) => {
+        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+        if (token === null) return;
+
+        const fetchData = async () => {
+            let res, data;
+
+            try {
+                res = fetch(`${import.meta.env}/workout-sessions`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                });
+                data = await res.json();
+                
+                if (res.ok) {
+                    setLogs(prev => [...prev, data.new_log]);
+                }
+                else if ("errors" in data) {
+                    console.log(data.errors);
+                }
+            }
+            catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
+    };
+
+    const handleDeleteLog = (log_id) => {
+        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+        if (token === null) return;
+
+        const oldData = logs;
+        setLogs(prev => prev.filter(log => log.id !== log_id));
+
+        const fetchData = async () => {
+            let res, data;
+
+            try {
+                res = fetch(`${import.meta.env}/workout-sessions/${log_id}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    }
+                });
+                data = await res.json();
+                
+                if (!res.ok) {
+                    setLogs(oldData);
+                    console.log(data.message);
+                    if ("errors" in data) console.log(data.errors);
+                }
+            }
+            catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
+    };
 
     return (
         <div className="space-y-10">
@@ -87,20 +174,18 @@ const GymLog = () => {
                             </thead>
 
                             <tbody>
-                                {logs.map((log, index) => (
+                                {logs.map((log) => (
                                     <tr
-                                        key={index}
+                                        key={log.id}
                                         className="transition-colors duration-150 hover:bg-white/5 border-b border-white/5 last:border-none"
                                     >
                                         <td className="px-6 py-4 font-medium text-white">{log.id}</td>
                                         <td className="px-6 py-4 font-medium text-white">{log.name}</td>
                                         <td className="px-6 py-4 text-gray-300">{log.timestamp}</td>
-                                        <td className="px-6 py-4 text-white">{log.customerType}</td>
+                                        <td className="px-6 py-4 text-white">{log.customer_type}</td>
                                         <td className="px-6 py-4 text-right">
                                             <button
-                                                onClick={() =>
-                                                    setLogs(prev => prev.filter((_, i) => i !== index))
-                                                }
+                                                onClick={() => handleDeleteLog(log.id)}
                                                 className="text-gray-400 hover:text-red-400 transition-all"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
