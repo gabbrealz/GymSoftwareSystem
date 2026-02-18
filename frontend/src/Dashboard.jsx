@@ -5,6 +5,7 @@ import InventoryAnalytics from './components/ProductInventory'
 import GymLog from './components/GymLog'
 import Member from './components/Member'
 import Employee from './components/Employee'
+import Transactions from './components/Transaction'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
@@ -103,6 +104,7 @@ const Dashboard = ({ onLogout }) => {
             {activeItem === 'gym logs' && <GymLog />}
             {activeItem === 'employee list' && <Employee />}
             {activeItem === 'member list' && <Member />}
+            {activeItem === 'transactions' && <Transactions />}
             
         </main>
     </div>
