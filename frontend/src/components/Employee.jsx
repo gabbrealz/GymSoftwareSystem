@@ -58,7 +58,7 @@ const Employee = () => {
           },
           body: JSON.stringify(formData)
         });
-        data = res.json();
+        data = await res.json();
 
         if (!res.ok) {
           setEmployees(previousEmployees);
