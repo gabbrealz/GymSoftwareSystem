@@ -46,7 +46,7 @@ class MemberController extends Controller
                 'plan_type' => 'bail|required|in:Regular,VIP'
             ]);
 
-            return DB::transaction(function () use ($data) {
+            $new_member = DB::transaction(function () use ($data) {
 
                 $membership_plans = Cache::rememberForever('membership_plans',
                     fn () => MembershipPlan::all()->keyBy('type')
@@ -78,13 +78,14 @@ class MemberController extends Controller
                     'expiry_date' => $subscription->date_time_out,
                 ];
 
-                Cache::forget('members');
-                return response()->json([
-                    'message' => 'Member created successfully',
-                    'new_member' => $member_info,
-                ], 201);
+                return $member_info;
             });
-
+            
+            Cache::forget('members');
+            return response()->json([
+                'message' => 'Member created successfully',
+                'new_member' => $new_member,
+            ], 201);
         }
         catch (ValidationException $e) {
             return response()->json([
