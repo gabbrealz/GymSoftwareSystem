@@ -3,6 +3,10 @@ import AttendanceChart from './AttendanceChart';
 import AddLog from './AddLog';
 
 const GymLog = () => {
+    const [month, setMonth] = useState(() => {
+        const now = new Date();
+        return now.toISOString().slice(0, 7);
+    });
     const [logs, setLogs] = useState([]);
     const [range, setRange] = useState('daily');
     const [isAddLogOpen, setIsAddLogOpen] = useState(false);
@@ -136,18 +140,28 @@ const GymLog = () => {
                         <h2 className="text-xl font-semibold text-gray-200">
                             Attendance Analytics
                         </h2>
-                        <select
-                            className="bg-[#1f1f1f] text-white px-3 py-1 rounded-md border border-white/10 focus:outline-none"
-                            onChange={(e) => setRange(e.target.value)}
-                            value={range}
-                        >
-                            <option value="daily">Daily</option>
-                            <option value="weekly">Weekly</option>
-                        </select>
+
+                        <div className="flex gap-3">
+                            <input
+                                type="month"
+                                value={month}
+                                onChange={(e) => setMonth(e.target.value)}
+                                className="bg-[#1f1f1f] text-white px-3 py-1 rounded-md border border-white/10 focus:outline-none"
+                            />
+
+                            <select
+                                className="bg-[#1f1f1f] text-white px-3 py-1 rounded-md border border-white/10 focus:outline-none"
+                                value={range}
+                                onChange={(e) => setRange(e.target.value)}
+                            >
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div className="bg-[#1f1f1f] rounded-[10px] p-6 border border-white/5">
-                        <AttendanceChart range={range} />
+                        <AttendanceChart logs={logs} range={range} month={month} />
                     </div>
                 </div>
 
@@ -165,7 +179,6 @@ const GymLog = () => {
                                     backgroundColor: 'rgba(119,14,0,0.6)',
                                     borderBottom: '1px solid rgba(255,255,255,0.08)'
                                 }}>
-                                    <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">ID</th>
                                     <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Name</th>
                                     <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Date & Time</th>
                                     <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Customer Type</th>
@@ -179,7 +192,6 @@ const GymLog = () => {
                                         key={log.id}
                                         className="transition-colors duration-150 hover:bg-white/5 border-b border-white/5 last:border-none"
                                     >
-                                        <td className="px-6 py-4 font-medium text-white">{log.id}</td>
                                         <td className="px-6 py-4 font-medium text-white">{log.name}</td>
                                         <td className="px-6 py-4 text-gray-300">{log.timestamp}</td>
                                         <td className="px-6 py-4 text-white">{log.customer_type}</td>
