@@ -18,6 +18,7 @@ class MembershipPlan extends Model
     ];
 
     protected $casts = [
+        'rate' => 'decimal:2',
         'session_rate' => 'decimal:2',
     ];
 
