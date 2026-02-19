@@ -3,6 +3,10 @@ import AttendanceChart from './AttendanceChart';
 import AddLog from './AddLog';
 
 const GymLog = () => {
+    const [month, setMonth] = useState(() => {
+        const now = new Date();
+        return now.toISOString().slice(0, 7);
+    });
     const [logs, setLogs] = useState([]);
     const [range, setRange] = useState('daily');
     const [isAddLogOpen, setIsAddLogOpen] = useState(false);
@@ -136,18 +140,28 @@ const GymLog = () => {
                         <h2 className="text-xl font-semibold text-gray-200">
                             Attendance Analytics
                         </h2>
-                        <select
-                            className="bg-[#1f1f1f] text-white px-3 py-1 rounded-md border border-white/10 focus:outline-none"
-                            onChange={(e) => setRange(e.target.value)}
-                            value={range}
-                        >
-                            <option value="daily">Daily</option>
-                            <option value="weekly">Weekly</option>
-                        </select>
+
+                        <div className="flex gap-3">
+                            <input
+                                type="month"
+                                value={month}
+                                onChange={(e) => setMonth(e.target.value)}
+                                className="bg-[#1f1f1f] text-white px-3 py-1 rounded-md border border-white/10 focus:outline-none"
+                            />
+
+                            <select
+                                className="bg-[#1f1f1f] text-white px-3 py-1 rounded-md border border-white/10 focus:outline-none"
+                                value={range}
+                                onChange={(e) => setRange(e.target.value)}
+                            >
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div className="bg-[#1f1f1f] rounded-[10px] p-6 border border-white/5">
-                        <AttendanceChart logs={logs} range={range} />
+                        <AttendanceChart logs={logs} range={range} month={month} />
                     </div>
                 </div>
 

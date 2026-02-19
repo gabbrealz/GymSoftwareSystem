@@ -11,7 +11,6 @@ import {
   Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { fill } from "three/src/extras/TextureUtils";
 
 ChartJS.register(
   CategoryScale,
@@ -24,28 +23,43 @@ ChartJS.register(
   Filler
 );
 
-export default function AttendanceChart({ logs, range }) {
+export default function AttendanceChart({ logs, range, month }) {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [],
   });
 
-  useEffect(() => {
-    if (!logs || logs.length === 0) {
+    useEffect(() => {
+    if (!logs || logs.length === 0 || !month) {
+      setChartData({ labels: [], datasets: [] });
+      return;
+    }
+
+    // 🔥 FILTER VALID LOGS FIRST
+    const filteredLogs = logs.filter((log) => {
+      if (!log.timestamp) return false;
+
+      const logDate = new Date(log.timestamp);
+      if (isNaN(logDate)) return false;
+
+      const logMonth = logDate.toISOString().slice(0, 7);
+      return logMonth === month;
+    });
+
+    if (filteredLogs.length === 0) {
       setChartData({ labels: [], datasets: [] });
       return;
     }
 
     const grouped = {};
 
-    logs.forEach((log) => {
+    filteredLogs.forEach((log) => {
       const dateObj = new Date(log.timestamp);
 
       if (range === "daily") {
-        const key = dateObj.toISOString().split("T")[0]; // YYYY-MM-DD
+        const key = dateObj.toISOString().split("T")[0];
         grouped[key] = (grouped[key] || 0) + 1;
       } else {
-
         const startOfWeek = new Date(dateObj);
         startOfWeek.setDate(dateObj.getDate() - dateObj.getDay());
         startOfWeek.setHours(0, 0, 0, 0);
@@ -60,17 +74,20 @@ export default function AttendanceChart({ logs, range }) {
           });
 
         const key = `${format(startOfWeek)} - ${format(endOfWeek)}`;
-
         grouped[key] = (grouped[key] || 0) + 1;
       }
     });
 
     const sortedEntries = Object.entries(grouped).sort((a, b) => {
-      const getStartDate = (label) => {
-        if (range === "daily") return new Date(label);
-        return new Date(label.split(" - ")[0] + " 2026");
-      };
-      return getStartDate(a[0]) - getStartDate(b[0]);
+      if (range === "daily") {
+        return new Date(a[0]) - new Date(b[0]);
+      } else {
+        const year = month.split("-")[0];
+        return (
+          new Date(a[0].split(" - ")[0] + ` ${year}`) -
+          new Date(b[0].split(" - ")[0] + ` ${year}`)
+        );
+      }
     });
 
     const labels = sortedEntries.map((entry) => entry[0]);
@@ -80,10 +97,7 @@ export default function AttendanceChart({ logs, range }) {
       labels,
       datasets: [
         {
-          label:
-            range === "daily"
-              ? "Daily Visitors"
-              : "Weekly Visitors",
+          label: range === "daily" ? "Daily Visitors" : "Weekly Visitors",
           data: values,
           borderColor: "#00FFC6",
           backgroundColor: "rgba(0, 255, 198, 0.15)",
@@ -94,7 +108,7 @@ export default function AttendanceChart({ logs, range }) {
         },
       ],
     });
-  }, [logs, range]);
+  }, [logs, range, month]);
 
     const options = {
     responsive: true,
@@ -125,10 +139,10 @@ export default function AttendanceChart({ logs, range }) {
 
   if (chartData.labels.length === 0) {
     return (
-      <p className="text-gray-400">
-        No attendance data available for the selected range.
-      </p>
-    );
+      <div className="flex items-center justify-center h-full text-gray-400">
+        No attendance data available for the selected month.
+      </div>
+    )
   }
 
   return (
