@@ -18,12 +18,14 @@ class MemberController extends Controller
             return response()->json(Cache::remember('members', 600, fn() =>
                 DB::select("
                     SELECT
-                        m.id, c.name, m.email,
-                        m.address, m.contact_number,
+                        m.id, c.name, m.email, m.address,
+                        m.contact_number,
+                        p.type AS plan_type,
                         s.date_time_start AS join_date,
                         s.date_time_out AS expiry_date
                     FROM \"Customer\" c
                     JOIN \"MemberList\" m ON c.member_id = m.id
+                    LEFT JOIN \"MembershipPlan\" p ON m.plan_type = p.id
                     LEFT JOIN \"MembershipSubscription\" s ON s.member_id = m.id
                 ")
             ));
@@ -54,18 +56,32 @@ class MemberController extends Controller
                     'contact_number' => $data['contact_number'],
                     'email' => $data['email'],
                     'address' => $data['address'],
-                    'plan_type' => $membership_plans[$data['plan_type']],
+                    'plan_type' => $membership_plans[$data['plan_type']]->id,
                 ]);
-
-                Customer::create([
+                $customer = Customer::create([
                     'name' => $data['name'],
                     'member_id' => $member->id,
                     'created_at' => Carbon::now(),
                 ]);
+                $subscription = DB::table('MembershipSubscription')
+                    ->where('member_id', '=', $member->id)
+                    ->latest('date_time_start')->first();
+
+                $member_info = [
+                    'id' => $member->id,
+                    'name' => $customer->name,
+                    'email' => $member->email,
+                    'address' => $member->address,
+                    'contact_number' => $member->contact_number,
+                    'plan_type' => $data['plan_type'],
+                    'join_date' => $subscription->date_time_start,
+                    'expiry_date' => $subscription->date_time_out,
+                ];
 
                 Cache::forget('members');
                 return response()->json([
                     'message' => 'Member created successfully',
+                    'new_member' => $member_info,
                 ], 201);
             });
 

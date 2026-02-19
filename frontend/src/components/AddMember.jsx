@@ -5,16 +5,15 @@ const AddMember = ({ isOpen, onClose, onAdd, initialData }) => {
         name: '',
         email: '',
         address: '',
-        contact: '',
-        membershipPlan: '',
-        joinDate: '',
+        contact_number: '',
+        plan_type: '',
     });
 
     useEffect(() => {
         if (initialData) {
             setFormData(initialData);
         } else {
-            setFormData({ name: '', email: '', address: '', contact: '', membershipPlan: '', joinDate: '' });
+            setFormData({ name: '', email: '', address: '', contact_number: '', plan_type: '' });
         }
     }, [initialData, isOpen]);
 
@@ -50,9 +49,8 @@ const AddMember = ({ isOpen, onClose, onAdd, initialData }) => {
                         { label: 'Full Name', name: 'name', type: 'text', placeholder: 'Enter full name' },
                         { label: 'Email', name: 'email', type: 'email', placeholder: 'e.g. member@sertfit.com' },
                         { label: 'Address', name: 'address', type: 'text', placeholder: 'Enter address' },
-                        { label: 'Contact', name: 'contact', type: 'tel', placeholder: '0912-345-6789' },
-                        { label: 'Membership Plan', name: 'membershipPlan', type: 'select', options: ['Regular', 'VIP'] },
-                        { label: 'Join Date', name: 'joinDate', type: 'date' },
+                        { label: 'Contact', name: 'contact_number', type: 'tel', placeholder: '0912-345-6789' },
+                        { label: 'Membership Plan', name: 'plan_type', type: 'select', options: ['Regular', 'VIP'] },
                     ].map((field) => (
                         <div key={field.name}>
                             <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">
