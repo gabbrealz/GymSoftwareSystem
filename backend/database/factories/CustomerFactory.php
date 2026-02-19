@@ -30,10 +30,10 @@ class CustomerFactory extends Factory
             if ($plan_ids->isEmpty()) return;
 
             $member = Member::create([
-                'email' => Str::slug($customer->name) . '@gmail.com',
+                'email' => Str::slug($customer->name) . rand(10,99) . '@gmail.com',
                 'contact_number' => Arr::random(['09123456789','09987654321','09132465798']),
                 'address' => $this->faker->address(),
-                'plan_type' => Arr::random($plan_ids->toArray()),
+                'plan_type' => $plan_ids->random()['id'],
             ]);
 
             $customer->member_id = $member->id;
