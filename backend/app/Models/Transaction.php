@@ -10,16 +10,8 @@ class Transaction extends Model
     protected $primaryKey = 'id';
     public $timestamps = false;
 
-    protected $fillable = [
-        'date_time',
-        'mode_of_payment',
-        'reference_number',
-        'status',
-        'recorded_by',
-    ];
-
     protected $casts = [
-        'date_time' => 'datetime',
+        'date_time' => 'datetime:Y-m-d H:m:s',
     ];
 
     public function recordedBy()
