@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\Customer;
 use App\Models\Member;
 use App\Models\MembershipPlan;
+use App\Models\MembershipSubscription;
+use App\Models\Transaction;
 use Illuminate\Validation\ValidationException;
 
 class MemberController extends Controller
@@ -43,7 +45,10 @@ class MemberController extends Controller
                 'email' => 'bail|required|email|unique:MemberList',
                 'address' => 'bail|required|max:255|regex:/^[0-9a-zÀ-ÿ.,#\'\/\-]+(?:\s[0-9a-zÀ-ÿ.,#\'\/\-]+)*$/i',
                 'contact_number' => 'bail|required|regex:/^09\d{9}$/',
-                'plan_type' => 'bail|required|in:Regular,VIP'
+                'plan_type' => 'bail|required|in:Regular,VIP',
+                'payment_amount' => 'bail|required|numeric|gte:0',
+                'mode_of_payment' => 'bail|required|in:Cash,GCash',
+                'payment_status' => 'bail|required|in:Pending,Paid,Failed',
             ]);
 
             $new_member = DB::transaction(function () use ($data) {
@@ -66,6 +71,15 @@ class MemberController extends Controller
                 $subscription = DB::table('MembershipSubscription')
                     ->where('member_id', '=', $member->id)
                     ->latest('date_time_start')->first();
+
+                Transaction::create([
+                    'date_time' => $customer->created_at,
+                    'paid_amount' => (float) $data['payment_amount'],
+                    'mode_of_payment' => $data['mode_of_payment'],
+                    'payment_status' => $data['payment_status'],
+                    'recorded_by' => request()->user()->id,
+                    'subscription_id' => $subscription->id,
+                ]);
 
                 $member_info = [
                     'id' => $member->id,
@@ -107,7 +121,10 @@ class MemberController extends Controller
                 'email' => 'bail|required|email|unique:MemberList',
                 'address' => 'bail|required|max:255|regex:/^[0-9a-zÀ-ÿ.,#\'\/\-]+(?:\s[0-9a-zÀ-ÿ.,#\'\/\-]+)*$/i',
                 'contact_number' => 'bail|required|regex:/^09\d{9}$/',
-                'plan_type' => 'bail|required|in:Regular,VIP'
+                'plan_type' => 'bail|required|in:Regular,VIP',
+                'payment_amount' => 'bail|nullable|numeric|gte:0',
+                'mode_of_payment' => 'bail|nullable|in:Cash,GCash',
+                'payment_status' => 'bail|nullable|in:Pending,Paid,Failed',
             ]);
 
             if ($data['email'] !== $member->email && Member::where('email','=',$data['email'])->exists()) {
@@ -116,11 +133,45 @@ class MemberController extends Controller
                 ]);
             }
 
-            $member->fill($data);
-            if ($member->isDirty()) {
-                $member->save();
-                Cache::forget('members');
-            }
+            DB::transaction(function () use ($data, $member) {
+
+                $membership_plans = Cache::rememberForever('membership_plans',
+                    fn () => MembershipPlan::all()->keyBy('type')
+                );
+
+                $attributes = [
+                    'contact_number' => $data['contact_number'],
+                    'email' => $data['email'],
+                    'address' => $data['address'],
+                    'plan_type' => $membership_plans[$data['plan_type']]->id,
+                ];
+
+                $member->fill($attributes);
+                if ($member->isDirty()) {
+                    $member->save();
+                    Cache::forget('members');
+                }
+    
+                if (!empty($data['payment_amount']) && !empty($data['mode_of_payment']) && !empty($data['payment_status'])) {
+
+                    $subscription = MembershipSubscription::create([
+                        'date_time_start' => Carbon::now(),
+                        'date_time_out' => Carbon::now()->addMonth(),
+                        'plan_id' => $membership_plans[$data['plan_type']]->id,
+                        'member_id' => $member->id,
+                    ]);
+                    
+                    Transaction::create([
+                        'date_time' => Carbon::now(),
+                        'paid_amount' => (float) $data['payment_amount'],
+                        'mode_of_payment' => $data['mode_of_payment'],
+                        'payment_status' => $data['payment_status'],
+                        'recorded_by' => request()->user()->id,
+                        'subscription_id' => $subscription->id,
+                    ]);
+                    
+                }
+            });
         }
         catch (ValidationException $e) {
             return response()->json([

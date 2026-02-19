@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import AddMember from './AddMember'
+import UpdateMember from './UpdateMember'
 
 const Member = () => {
     const [members, setMembers] = useState([])
@@ -38,75 +39,84 @@ const Member = () => {
         fetchData();
     }, []);
 
-    const handleSaveMember = (formData) => {
+    const handleAddMember = async (formData) => {
         const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
         if (token === null) return;
 
-        const previousMembers = members;
-        setMembers(prev => prev.map(mem => mem.id === editingMember.id ? formData : mem));
+        console.log(formData);
 
         let res, data;
 
-        const fetchData = editingMember ?
-        async () => {
-            try {
-                res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/members/${editingMember.id}`, {
-                    method: "PUT",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
-                    body: JSON.stringify(data)
-                });
-                data = await res.json();
+        try {
+            res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/members`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+            data = await res.json();
 
-                if (!res.ok) {
-                    setMembers(previousMembers);
-                    console.log(data.message);
-                    if ("errors" in data) console.log(data.errors);
-                }
+            if (res.ok) {
+                setMembers(prev => [...prev, data.new_member]);
             }
-            catch (error) {
-                setMembers(previousMembers);
-                console.error(error);
+            else {
+                console.log(data.message);
+                if ("errors" in data) console.log(data.errors);
             }
-        } :
-        async () => {
-            try {
-                res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/members`, {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
-                    body: JSON.stringify(formData)
-                });
-                data = await res.json();
+        }
+        catch (error) {
+            setEmployees(previousEmployees);
+            console.error(error);
+        }
 
-                if (res.ok) {
-                    setMembers(prev => [...prev, data.new_member]);
-                }
-                else {
-                    console.log(data.message);
-                    if ("errors" in data) console.log(data.errors);
-                }
-            }
-            catch (error) {
-                setEmployees(previousEmployees);
-                console.error(error);
-            }
-        };
-
-        fetchData();
-        setEditingMember(null);
         setIsAddMemberOpen(false);
+    };
+
+    const handleUpdateMember = async (formData) => {
+        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+        if (token === null) return;
+
+        console.log(formData);
+
+        const previousMembers = members;
+        setMembers(prev => prev.map(mem => mem.id === editingMember.id ? { ...editingMember, ...formData } : mem));
+
+        let res, data;
+
+        try {
+            res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/members/${editingMember.id}`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+            data = await res.json();
+
+            if (!res.ok) {
+                setMembers(previousMembers);
+                console.log(message);
+                if ("errors" in data) console.log(data.errors);
+            }
+        }
+        catch (error) {
+            setEmployees(previousEmployees);
+            console.error(error);
+        }
+
+        setEditingMember(null);
     };
 
     const handleDeleteMember = async (memberId) => {
         const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
         if (token === null) return;
+
+        console.log(formData);
 
         const previousMembers = members;
         setMembers(prev => prev.filter(mem => mem.id !== memberId));
@@ -133,31 +143,31 @@ const Member = () => {
         }        
     };
 
-    const openEditModal = (member) => {
-        setEditingMember(member)
-        setIsAddMemberOpen(true)
-    }
-
     return (
         <div>
         <div className="flex items-center justify-between mb-8">
             <h1 className="text-[48px] font-bold">Member List</h1>
             <button
-            onClick={() => { setEditingMember(null); setIsAddMemberOpen(true); }}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-[8px] font-semibold text-white transition-all duration-200 hover:opacity-90"
-            style={{ backgroundColor: '#770e00' }}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Add Member
+                onClick={() => { setEditingMember(null); setIsAddMemberOpen(true); }}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-[8px] font-semibold text-white transition-all duration-200 hover:opacity-90"
+                style={{ backgroundColor: '#770e00' }}
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add Member
             </button>
         </div>
 
         <AddMember
             isOpen={isAddMemberOpen}
-            onClose={() => { setIsAddMemberOpen(false); setEditingMember(null); }}
-            onAdd={handleSaveMember}
-            initialData={editingMember}/>
+            onClose={() => setIsAddMemberOpen(false)}
+            onAdd={handleAddMember} />
+
+        <UpdateMember
+            isOpen={editingMember !== null}
+            onClose={() => setEditingMember(null)}
+            onAdd={() => {}} />
 
         <div className="rounded-[10px] overflow-hidden border border-white/5 shadow-xl" style={{ backgroundColor: '#303030cc' }}>
             <table className="w-full text-sm">
@@ -185,7 +195,7 @@ const Member = () => {
                     <td className="px-6 py-4 text-gray-300">{mem.expiry_date}</td>
                     <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-3">
-                            <button className="text-gray-400 hover:text-white transition-all" onClick={() => openEditModal(mem)} title="Edit">
+                            <button className="text-gray-400 hover:text-white transition-all" onClick={() => setEditingMember(mem)} title="Edit">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                                 </svg>

@@ -3,12 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MembershipSubscription extends Model
 {
-    use HasFactory;
-
     protected $table = 'MembershipSubscription';
     protected $primaryKey = 'id';
     public $timestamps = false;
@@ -21,8 +18,8 @@ class MembershipSubscription extends Model
     ];
 
     protected $casts = [
-        'date_time_start' => 'datetime',
-        'date_time_out' => 'datetime',
+        'date_time_start' => 'datetime:Y-m-d H:i:s',
+        'date_time_out' => 'datetime H:i:s',
     ];
 
     public function plan()

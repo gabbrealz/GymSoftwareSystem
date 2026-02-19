@@ -11,7 +11,7 @@ class TransactionController extends Controller
 {
     public function get_transactions() {
         try {
-            $transactions = DB::unprepared("
+            $transactions = DB::select("
                 SELECT
                     t.id,
                     t.reference_number,

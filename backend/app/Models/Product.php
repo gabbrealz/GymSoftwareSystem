@@ -20,7 +20,7 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'last_stocked' => 'date',
+        'last_stocked' => 'date:Y-m-d',
     ];
 
     public function stockedBy()

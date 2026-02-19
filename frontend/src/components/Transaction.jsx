@@ -5,6 +5,9 @@ const Transactions = () => {
     const [txn, setTxn] = useState([]);
 
     useEffect(() => {
+        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+        if (token === null) return;
+
         const fetchData = async () => {
             let res, data;
 
@@ -34,6 +37,9 @@ const Transactions = () => {
     }, []);
 
     const handleUpdateStatus = async (txnId, newStatus) => {
+        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+        if (token === null) return;
+
         let res, data;
 
         const previousTransactions = txn;
