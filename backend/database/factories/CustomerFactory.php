@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Customer;
 use App\Models\Member;
+use App\Models\MembershipPlan;
 
 class CustomerFactory extends Factory
 {
@@ -25,11 +26,14 @@ class CustomerFactory extends Factory
     public function asMember()
     {
         return $this->afterCreating(function (Customer $customer) {
+            $plan_ids = MembershipPlan::select('id')->get();
+            if ($plan_ids->isEmpty()) return;
+
             $member = Member::create([
                 'email' => Str::slug($customer->name) . '@gmail.com',
                 'contact_number' => Arr::random(['09123456789','09987654321','09132465798']),
                 'address' => $this->faker->address(),
-                'plan_type' => Arr::random([2, 3]),
+                'plan_type' => Arr::random($plan_ids->toArray()),
             ]);
 
             $customer->member_id = $member->id;
