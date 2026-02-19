@@ -163,7 +163,6 @@ const Member = () => {
             <table className="w-full text-sm">
             <thead>
                 <tr style={{ backgroundColor: 'rgba(119,14,0,0.6)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">ID</th>
                 <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Name</th>
                 <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Email</th>
                 <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Address</th>
@@ -177,7 +176,6 @@ const Member = () => {
             <tbody>
                 {members.map(mem => (
                 <tr key={mem.id} className="transition-colors duration-150 hover:bg-white/5 border-b border-white/5 last:border-none">
-                    <td className="px-6 py-4 font-medium text-white">{mem.id}</td>
                     <td className="px-6 py-4 font-medium text-white">{mem.name}</td>
                     <td className="px-6 py-4 text-gray-300">{mem.email}</td>
                     <td className="px-6 py-4 text-gray-300">{mem.address}</td>

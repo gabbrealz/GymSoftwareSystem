@@ -165,7 +165,6 @@ const GymLog = () => {
                                     backgroundColor: 'rgba(119,14,0,0.6)',
                                     borderBottom: '1px solid rgba(255,255,255,0.08)'
                                 }}>
-                                    <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">ID</th>
                                     <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Name</th>
                                     <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Date & Time</th>
                                     <th className="text-left px-6 py-4 font-semibold text-gray-200 tracking-wide">Customer Type</th>
@@ -179,7 +178,6 @@ const GymLog = () => {
                                         key={log.id}
                                         className="transition-colors duration-150 hover:bg-white/5 border-b border-white/5 last:border-none"
                                     >
-                                        <td className="px-6 py-4 font-medium text-white">{log.id}</td>
                                         <td className="px-6 py-4 font-medium text-white">{log.name}</td>
                                         <td className="px-6 py-4 text-gray-300">{log.timestamp}</td>
                                         <td className="px-6 py-4 text-white">{log.customer_type}</td>
