@@ -11,6 +11,7 @@ import {
   Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { fill } from "three/src/extras/TextureUtils";
 
 ChartJS.register(
   CategoryScale,
@@ -23,86 +24,79 @@ ChartJS.register(
   Filler
 );
 
-export default function AttendanceChart({ range }) {
+export default function AttendanceChart({ logs, range }) {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [],
   });
 
-  const [loading, setLoading] = useState(true);
-
-  // TOGGLE THIS TO FALSE IF BACKEND IS READY
-  const USE_SAMPLE_DATA = true;
-
   useEffect(() => {
-    setLoading(true);
-
-    if (USE_SAMPLE_DATA) {
-      loadSampleData();
-    } else {
-      fetch(`http://localhost:5000/api/attendance/${range}`)
-        .then((res) => res.json())
-        .then((data) => {
-          buildChart(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching attendance data:", error);
-          loadSampleData(); // fallback to sample if API fails
-        });
-    }
-  }, [range]);
-
-  // SAMPLE DATA
-  const loadSampleData = () => {
-    let sample;
-
-    if (range === "daily") {
-      sample = [
-        { date: "Sun", visitors: 12 },
-        { date: "Mon", visitors: 18 },
-        { date: "Tue", visitors: 9 },
-        { date: "Wed", visitors: 22 },
-        { date: "Thu", visitors: 50 },
-        { date: "Fri", visitors: 27 },
-        { date: "Sat", visitors: 15 },
-      ];
-    } else {
-      sample = [
-        { date: "Week 1", visitors: 120 },
-        { date: "Week 2", visitors: 150 },
-        { date: "Week 3", visitors: 98 },
-        { date: "Week 4", visitors: 175 },
-      ];
+    if (!logs || logs.length === 0) {
+      setChartData({ labels: [], datasets: [] });
+      return;
     }
 
-    buildChart(sample);
-  };
+    const grouped = {};
 
-  // Build Chart Data
-  const buildChart = (data) => {
+    logs.forEach((log) => {
+      const dateObj = new Date(log.timestamp);
+
+      if (range === "daily") {
+        const key = dateObj.toISOString().split("T")[0]; // YYYY-MM-DD
+        grouped[key] = (grouped[key] || 0) + 1;
+      } else {
+
+        const startOfWeek = new Date(dateObj);
+        startOfWeek.setDate(dateObj.getDate() - dateObj.getDay());
+        startOfWeek.setHours(0, 0, 0, 0);
+
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+        const format = (date) =>
+          date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+
+        const key = `${format(startOfWeek)} - ${format(endOfWeek)}`;
+
+        grouped[key] = (grouped[key] || 0) + 1;
+      }
+    });
+
+    const sortedEntries = Object.entries(grouped).sort((a, b) => {
+      const getStartDate = (label) => {
+        if (range === "daily") return new Date(label);
+        return new Date(label.split(" - ")[0] + " 2026");
+      };
+      return getStartDate(a[0]) - getStartDate(b[0]);
+    });
+
+    const labels = sortedEntries.map((entry) => entry[0]);
+    const values = sortedEntries.map((entry) => entry[1]);
+
     setChartData({
-      labels: data.map((item) => item.date),
+      labels,
       datasets: [
         {
           label:
             range === "daily"
               ? "Daily Visitors"
               : "Weekly Visitors",
-          data: data.map((item) => item.visitors),
+          data: values,
           borderColor: "#00FFC6",
           backgroundColor: "rgba(0, 255, 198, 0.15)",
           tension: 0.4,
           fill: true,
-          pointRadius: 5,
-          pointHoverRadius: 7,
+          pointRadius: 4,
+          pointHoverRadius: 6,
         },
       ],
     });
+  }, [logs, range]);
 
-    setLoading(false);
-  };
-
-  const options = {
+    const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -111,34 +105,31 @@ export default function AttendanceChart({ range }) {
           color: "#fff",
         },
       },
-      title: {
-        display: false,
-      },
     },
     scales: {
       x: {
-        ticks: {
-          color: "#ccc",
-        },
-        grid: {
-          color: "rgba(255,255,255,0.05)",
-        },
+        ticks: { stepSize: 1, color: "#ccc" },
+        grid: { color: "rgba(255,255,255,0.05)" },
       },
       y: {
         beginAtZero: true,
         ticks: {
+          stepSize: 1,
+          precision: 0,
           color: "#ccc",
         },
-        grid: {
-          color: "rgba(255,255,255,0.05)",
-        },
+        grid: { color: "rgba(255,255,255,0.05)" },
       },
     },
   };
 
-  if (loading) return <p className="text-gray-400">Loading chart...</p>;
-  if (chartData.labels.length === 0)
-    return <p className="text-gray-400">No attendance data available.</p>;
+  if (chartData.labels.length === 0) {
+    return (
+      <p className="text-gray-400">
+        No attendance data available for the selected range.
+      </p>
+    );
+  }
 
   return (
     <div className="h-[350px]">

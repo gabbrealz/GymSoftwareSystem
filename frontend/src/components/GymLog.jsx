@@ -147,7 +147,7 @@ const GymLog = () => {
                     </div>
 
                     <div className="bg-[#1f1f1f] rounded-[10px] p-6 border border-white/5">
-                        <AttendanceChart range={range} />
+                        <AttendanceChart logs={logs} range={range} />
                     </div>
                 </div>
 
