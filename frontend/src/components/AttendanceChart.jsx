@@ -29,21 +29,23 @@ export default function AttendanceChart({ logs, range, month }) {
     datasets: [],
   });
 
-    useEffect(() => {
+  useEffect(() => {
     if (!logs || logs.length === 0 || !month) {
       setChartData({ labels: [], datasets: [] });
       return;
     }
 
-    // 🔥 FILTER VALID LOGS FIRST
     const filteredLogs = logs.filter((log) => {
       if (!log.timestamp) return false;
 
       const logDate = new Date(log.timestamp);
       if (isNaN(logDate)) return false;
 
-      const logMonth = logDate.toISOString().slice(0, 7);
-      return logMonth === month;
+      const localYear = logDate.getFullYear();
+      const localMonth = String(logDate.getMonth() + 1).padStart(2, "0");
+      const logMonthString = `${localYear}-${localMonth}`;
+
+      return logMonthString === month;
     });
 
     if (filteredLogs.length === 0) {
@@ -55,17 +57,34 @@ export default function AttendanceChart({ logs, range, month }) {
 
     filteredLogs.forEach((log) => {
       const dateObj = new Date(log.timestamp);
+      let key = "";
+      let displayLabel = "";
 
       if (range === "daily") {
-        const key = dateObj.toISOString().split("T")[0];
-        grouped[key] = (grouped[key] || 0) + 1;
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+        const d = String(dateObj.getDate()).padStart(2, "0");
+        
+        key = `${y}-${m}-${d}`;
+        
+        displayLabel = dateObj.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+
       } else {
         const startOfWeek = new Date(dateObj);
-        startOfWeek.setDate(dateObj.getDate() - dateObj.getDay());
         startOfWeek.setHours(0, 0, 0, 0);
+        startOfWeek.setDate(dateObj.getDate() - dateObj.getDay());
 
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+        const y = startOfWeek.getFullYear();
+        const m = String(startOfWeek.getMonth() + 1).padStart(2, "0");
+        const d = String(startOfWeek.getDate()).padStart(2, "0");
+        
+        key = `${y}-${m}-${d}`;
 
         const format = (date) =>
           date.toLocaleDateString("en-US", {
@@ -73,25 +92,21 @@ export default function AttendanceChart({ logs, range, month }) {
             day: "numeric",
           });
 
-        const key = `${format(startOfWeek)} - ${format(endOfWeek)}`;
-        grouped[key] = (grouped[key] || 0) + 1;
+        displayLabel = `${format(startOfWeek)} - ${format(endOfWeek)}`;
       }
+
+      if (!grouped[key]) {
+        grouped[key] = { count: 0, label: displayLabel };
+      }
+      grouped[key].count += 1;
     });
 
     const sortedEntries = Object.entries(grouped).sort((a, b) => {
-      if (range === "daily") {
-        return new Date(a[0]) - new Date(b[0]);
-      } else {
-        const year = month.split("-")[0];
-        return (
-          new Date(a[0].split(" - ")[0] + ` ${year}`) -
-          new Date(b[0].split(" - ")[0] + ` ${year}`)
-        );
-      }
+      return a[0].localeCompare(b[0]);
     });
 
-    const labels = sortedEntries.map((entry) => entry[0]);
-    const values = sortedEntries.map((entry) => entry[1]);
+    const labels = sortedEntries.map((entry) => entry[1].label);
+    const values = sortedEntries.map((entry) => entry[1].count);
 
     setChartData({
       labels,
@@ -110,7 +125,7 @@ export default function AttendanceChart({ logs, range, month }) {
     });
   }, [logs, range, month]);
 
-    const options = {
+  const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -142,7 +157,7 @@ export default function AttendanceChart({ logs, range, month }) {
       <div className="flex items-center justify-center h-full text-gray-400">
         No attendance data available for the selected month.
       </div>
-    )
+    );
   }
 
   return (

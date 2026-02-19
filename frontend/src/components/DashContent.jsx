@@ -43,7 +43,7 @@ const DashContent = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+      <div className="flex flex-col gap-6">
         
         <div className="bg-[#303030] backdrop-blur-sm p-6 rounded-[10px] shadow-lg border border-white/5">
             
@@ -74,7 +74,7 @@ const DashContent = () => {
             <AttendanceChart logs={logs} range={range} month={month} />
         </div>
 
-        <div className="bg-[#303030] backdrop-blur-sm p-6 rounded-[10px] shadow-lg border border-white/5">
+        {/*<div className="bg-[#303030] backdrop-blur-sm p-6 rounded-[10px] shadow-lg border border-white/5">
           <h2 className="text-xl font-semibold mb-4 text-gray-200">
             Court Booking
           </h2>
@@ -96,7 +96,7 @@ const DashContent = () => {
             Product Inventory
           </h2>
           <InventoryAnalytics />
-        </div>
+        </div>*/}
 
       </div>
     </>
