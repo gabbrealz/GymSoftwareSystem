@@ -16,8 +16,8 @@ const AddLog = ({ isOpen, onClose, onAdd }) => {
                 name: '',
                 email: '',
                 payment_amount: '',
-                mode_of_payment: '',
-                payment_status: ''
+                mode_of_payment: 'Cash',
+                payment_status: 'Pending'
             });
             setCustomerType('Walk-in');
         }

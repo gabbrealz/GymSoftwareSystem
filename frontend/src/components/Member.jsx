@@ -100,12 +100,12 @@ const Member = () => {
 
             if (!res.ok) {
                 setMembers(previousMembers);
-                console.log(message);
+                console.log(data.message);
                 if ("errors" in data) console.log(data.errors);
             }
         }
         catch (error) {
-            setEmployees(previousEmployees);
+            setMembers(previousMembers);
             console.error(error);
         }
 
@@ -167,7 +167,8 @@ const Member = () => {
         <UpdateMember
             isOpen={editingMember !== null}
             onClose={() => setEditingMember(null)}
-            onAdd={() => {}} />
+            onUpdate={handleUpdateMember}
+            initialData={editingMember} />
 
         <div className="rounded-[10px] overflow-hidden border border-white/5 shadow-xl" style={{ backgroundColor: '#303030cc' }}>
             <table className="w-full text-sm">

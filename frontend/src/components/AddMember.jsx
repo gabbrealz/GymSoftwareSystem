@@ -14,7 +14,16 @@ const AddMember = ({ isOpen, onClose, onAdd }) => {
     });
 
     useEffect(() => {
-        setFormData({ name: '', email: '', address: '', contact_number: '', plan_type: '' });
+        setFormData({
+            name: '',
+            email: '',
+            address: '',
+            contact_number: '',
+            plan_type: '',
+            payment_amount: '',
+            mode_of_payment: 'Cash',
+            payment_status: 'Pending'
+        });
         setStep(1);
     }, [isOpen]);
 

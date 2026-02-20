@@ -19,7 +19,7 @@ class GymLogController extends Controller
             return response()->json(Cache::remember('gym_logs', 600, fn() =>
                 DB::select("
                     SELECT
-                        c.id,
+                        w.id,
                         w.date_time_in AS timestamp,
                         c.name,
                         CASE
@@ -45,7 +45,7 @@ class GymLogController extends Controller
                 'payment_amount' => 'bail|required|numeric|gte:0',
                 'mode_of_payment' => 'bail|required|in:Cash,GCash',
                 'payment_status' => 'bail|required|in:Pending,Paid,Failed',
-                ]);
+            ]);
                 
 
             $log = DB::transaction(function () use ($data) {

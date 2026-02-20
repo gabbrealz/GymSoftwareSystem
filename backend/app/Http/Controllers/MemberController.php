@@ -76,7 +76,7 @@ class MemberController extends Controller
                     'date_time' => $customer->created_at,
                     'paid_amount' => (float) $data['payment_amount'],
                     'mode_of_payment' => $data['mode_of_payment'],
-                    'payment_status' => $data['payment_status'],
+                    'status' => $data['payment_status'],
                     'recorded_by' => request()->user()->id,
                     'subscription_id' => $subscription->id,
                 ]);
@@ -118,7 +118,7 @@ class MemberController extends Controller
         try {
             $data = $request->validate([
                 'name' => 'bail|required|max:255|regex:/^\w+(\s\w+)*$/i',
-                'email' => 'bail|required|email|unique:MemberList',
+                'email' => 'bail|required|email',
                 'address' => 'bail|required|max:255|regex:/^[0-9a-zÀ-ÿ.,#\'\/\-]+(?:\s[0-9a-zÀ-ÿ.,#\'\/\-]+)*$/i',
                 'contact_number' => 'bail|required|regex:/^09\d{9}$/',
                 'plan_type' => 'bail|required|in:Regular,VIP',
@@ -146,6 +146,9 @@ class MemberController extends Controller
                     'plan_type' => $membership_plans[$data['plan_type']]->id,
                 ];
 
+                Customer::where('member_id', '=', $member->id)
+                    ->update(['name' => $data['name']]);
+
                 $member->fill($attributes);
                 if ($member->isDirty()) {
                     $member->save();
@@ -172,6 +175,8 @@ class MemberController extends Controller
                     
                 }
             });
+
+            Cache::forget('members');
         }
         catch (ValidationException $e) {
             return response()->json([
