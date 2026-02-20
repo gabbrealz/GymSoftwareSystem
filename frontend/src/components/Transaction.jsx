@@ -82,6 +82,7 @@ const Transactions = () => {
                             <th className="px-6 py-4 font-semibold text-gray-200 tracking-wide">Date & Time</th>
                             <th className="px-6 py-4 font-semibold text-gray-200 tracking-wide">Transaction Type</th>
                             <th className="px-6 py-4 font-semibold text-gray-200 tracking-wide">Mode of Payment</th>
+                            <th className="px-6 py-4 font-semibold text-gray-200 tracking-wide">Amount Due</th>
                             <th className="px-6 py-4 font-semibold text-gray-200 tracking-wide">Status</th>
                             <th className="px-6 py-4 font-semibold text-gray-200 tracking-wide">Recorded By</th>
                         </tr>
@@ -93,6 +94,7 @@ const Transactions = () => {
                                 <td className="px-6 py-4">{item.date_time}</td>
                                 <td className="px-6 py-4">{item.transaction_type}</td>
                                 <td className="px-6 py-4 text-gray-200">{item.mode_of_payment}</td>
+                                <td className="px-6 py-4 text-gray-200">{item.paid_amount}</td>
                                 <td className="px-6 py-4">
                                     <div className="relative inline-block">
                                         <select
