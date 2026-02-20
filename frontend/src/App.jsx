@@ -29,8 +29,8 @@ function App() {
 
       if (res.ok && "token" in data) {
         setIsAuthenticated(true);
-        localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME, data["token"]);
-        localStorage.setItem(import.meta.env.VITE_AUTH_USER_VAR_NAME, data["employee"]);
+        localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME, data.token);
+        localStorage.setItem(import.meta.env.VITE_AUTH_USER_VAR_NAME, JSON.stringify(data.employee));
 
         addToNotifs({
           message: "Login successful!",
