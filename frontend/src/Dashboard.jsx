@@ -18,7 +18,6 @@ const Dashboard = ({ onLogout }) => {
 
   const [isExpanded, setIsExpanded] = useState(false)
   const [pinned, setPinned] = useState(false)
-  const [range, setRange] = useState('daily')
   const shouldExpand = isExpanded || pinned;
   const [activeItem, setActiveItem] = useState('dashboard')
 
