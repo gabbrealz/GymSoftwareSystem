@@ -136,6 +136,35 @@ return new class extends Migration
             SET DEFAULT (
                 'TXN-' || LPAD(nextval('transaction_reference_seq')::text, 6, '0')
             );
+
+
+
+            CREATE OR REPLACE FUNCTION create_workout_session_on_customer_insert()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                INSERT INTO public.\"WorkoutSession\" (
+                    customer_id,
+                    date_time_in
+                )
+                VALUES (
+                    NEW.id,
+                    NEW.created_at
+                );
+
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trigger_create_workout_session
+            AFTER INSERT ON public.\"Customer\"
+            FOR EACH ROW
+            EXECUTE FUNCTION create_workout_session_on_customer_insert();
+
+
+
+            ALTER TABLE public.\"Customer\"
+            ADD CONSTRAINT workout_date_not_past_check
+            CHECK (\"created_at\" >= CURRENT_TIMESTAMP);
         ");
     }
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\GymLogController;
+use App\Http\Controllers\TransactionController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -27,6 +28,9 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/workout-sessions', [GymLogController::class, 'get_logs']);
     Route::post('/workout-sessions', [GymLogController::class, 'create_log']);
     Route::delete('/workout-sessions/{workoutSession}', [GymLogController::class, 'delete_log']);
+
+    Route::get('/transactions', [TransactionController::class, 'get_transactions']);
+    Route::put('/transactions/{transaction_id}', [TransactionController::class, 'update_transaction']);
 });
 
 Route::fallback(function () {

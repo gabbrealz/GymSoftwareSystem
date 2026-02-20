@@ -104,7 +104,7 @@ const AddEmployee = ({ isOpen, onClose, onAdd, initialData }) => {
                     { label: 'Email', name: 'email', type: 'email', placeholder: 'e.g. roycee.lacuesta@sertfit.com' },
                     { label: 'Address', name: 'address', type: 'text', placeholder: 'Enter home address' },
                     { label: 'Contact', name: 'contact_number', type: 'tel', placeholder: 'e.g. 09123456789' },
-                    { label: 'Salary', name: 'monthly_salary', type: 'text', placeholder: 'e.g. 25000' },
+                    { label: 'Salary', name: 'monthly_salary', type: 'number', placeholder: 'e.g. 25000' },
                     { label: 'Date Hired', name: 'hire_date', type: 'date' },
                 ].map((field) => (
                     <div key={field.name}>
@@ -116,7 +116,10 @@ const AddEmployee = ({ isOpen, onClose, onAdd, initialData }) => {
                         onChange={handleChange}
                         required
                         placeholder={field.placeholder}
-                        className="w-full px-4 py-2 bg-[#303030cc] text-white rounded-[8px] border border-white/10 focus:border-[#770e00] outline-none transition-all placeholder:text-gray-600 [color-scheme:dark]"/>
+                        className={`
+                            w-full px-4 py-2 bg-[#303030cc] text-white rounded-[8px] border border-white/10 focus:border-[#770e00] outline-none transition-all placeholder:text-gray-600 [color-scheme:dark]
+                            ${field.type === 'number' ? "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}
+                        `}/>
                     </div>
                 ))}
                 <button

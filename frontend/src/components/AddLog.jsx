@@ -1,15 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const AddLog = ({ isOpen, onClose, onAdd }) => {
     const [customerType, setCustomerType] = useState('Walk-in');
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        payment_amount: '',
+        mode_of_payment: 'Cash',
+        payment_status: 'Pending'
     });
 
     useEffect(() => {
         if (!isOpen) {
-            setFormData({ name: '', email: '' });
+            setFormData({
+                name: '',
+                email: '',
+                payment_amount: '',
+                mode_of_payment: 'Cash',
+                payment_status: 'Pending'
+            });
             setCustomerType('Walk-in');
         }
     }, [isOpen]);
@@ -84,6 +93,75 @@ const AddLog = ({ isOpen, onClose, onAdd }) => {
                                 />
                             </div>
                         )}
+
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">
+                                Amount Due
+                            </label>
+                            <input
+                                type="number"
+                                name="payment_amount"
+                                value={formData.payment_amount}
+                                onChange={handleChange}
+                                required
+                                placeholder="Enter payment amount"
+                                className="
+                                    w-full px-4 py-2 bg-[#303030cc] text-white rounded-[8px] border border-white/10 focus:border-[#770e00] outline-none transition-all placeholder:text-gray-600
+                                    [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                                "
+                            />
+                        </div>
+
+                        <div className="relative">
+                            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">
+                                Mode of Payment
+                            </label>
+                            <select
+                                name="mode_of_payment"
+                                value={formData.mode_of_payment}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-4 py-2 pr-10 bg-[#303030cc] text-white rounded-[8px] border border-white/10 focus:border-[#770e00] outline-none transition-all appearance-none cursor-pointer">
+                                <option value="Cash" className="bg-[#1a1a1a] text-white">
+                                    Cash
+                                </option>
+                                <option value="GCash" className="bg-[#1a1a1a] text-white">
+                                    GCash
+                                </option>
+                            </select>
+                            <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div className="relative">
+                            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">
+                                Payment Status
+                            </label>
+                            <select
+                                name="payment_status"
+                                value={formData.payment_status}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-4 py-2 pr-10 bg-[#303030cc] text-white rounded-[8px] border border-white/10 focus:border-[#770e00] outline-none transition-all appearance-none cursor-pointer">
+                                <option value="Pending" className="bg-[#1a1a1a] text-white">
+                                    Pending
+                                </option>
+                                <option value="Paid" className="bg-[#1a1a1a] text-white">
+                                    Paid
+                                </option>
+                                <option value="Failed" className="bg-[#1a1a1a] text-white">
+                                    Failed
+                                </option>
+                            </select>
+                            <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="flex gap-4 pt-2">

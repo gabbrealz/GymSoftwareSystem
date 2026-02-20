@@ -1,13 +1,72 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const initialTransactions = [
-    { refnum: 'TXN-000001', timestamp: '17/02/2026 08:30 AM', type: 'Membership Payment', mop: 'Gcash', status: 'Paid', recordedby: 'Roycee Hugh M. Lacuesta' },
-    { refnum: 'TXN-000002', timestamp: '17/02/2026 09:15 AM', type: 'Workout Session', mop: 'Cash', status: 'Pending', recordedby: 'Christian Gabriel P. Agot' },
-    { refnum: 'TXN-000003', timestamp: '17/02/2026 10:00 AM', type: 'Membership Payment', mop: 'Cash', status: 'Failed', recordedby: 'Ariana May F. Saromo' }
-];
 
 const Transactions = () => {
-    const [txn, setTxn] = useState(initialTransactions);
+    const [txn, setTxn] = useState([]);
+
+    useEffect(() => {
+        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+        if (token === null) return;
+
+        const fetchData = async () => {
+            let res, data;
+
+            try {
+                res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/transactions`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json"
+                    }
+                });
+                data = await res.json();
+
+                if (res.ok) {
+                    setTxn(data);
+                }
+                else {
+                    console.log(data.message);
+                }
+            }
+            catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const handleUpdateStatus = async (txnId, newStatus) => {
+        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+        if (token === null) return;
+
+        let res, data;
+
+        const previousTransactions = txn;
+        setTxn(prev => prev.map((t) => t.id === txnId ? { ...t, status: newStatus } : t));
+
+        try {
+            res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/transactions/${txnId}`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+            data = await res.json();
+
+            if (!res.ok) {
+                setTxn(previousTransactions);
+                console.log(data.message);
+                if ("errors" in data) console.log(data.errors);
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <div className="space-y-8">
@@ -28,21 +87,16 @@ const Transactions = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {txn.map((item, index) => (
-                            <tr key={index} className="border-b border-white/5 text-white hover:bg-white/5 transition-colors">
-                                <td className="px-6 py-4 font-medium text-gray-200">{item.refnum}</td>
-                                <td className="px-6 py-4">{item.timestamp}</td>
-                                <td className="px-6 py-4">{item.type}</td>
-                                <td className="px-6 py-4 text-gray-200">{item.mop}</td>
+                        {txn.map((item) => (
+                            <tr key={item.id} className="border-b border-white/5 text-white hover:bg-white/5 transition-colors">
+                                <td className="px-6 py-4 font-medium text-gray-200">{item.reference_number}</td>
+                                <td className="px-6 py-4">{item.date_time}</td>
+                                <td className="px-6 py-4">{item.transaction_type}</td>
+                                <td className="px-6 py-4 text-gray-200">{item.mode_of_payment}</td>
                                 <td className="px-6 py-4">
                                     <div className="relative inline-block">
                                         <select
-                                            value={item.status} onChange={(e) => {
-                                                const newStatus = e.target.value;
-                                                setTxn(prev => prev.map((t, i) => 
-                                                    i === index ? { ...t, status: newStatus } : t
-                                                ));
-                                            }}
+                                            value={item.status} onChange={(e) => handleUpdateStatus(item.id, e.target.value)}
                                             className={`bg-transparent font-semibold outline-none cursor-pointer appearance-none pr-6 transition-colors ${
                                                 item.status === 'Paid' ? 'text-green-400' : 
                                                 item.status === 'Failed' ? 'text-red-400' : 
@@ -60,7 +114,7 @@ const Transactions = () => {
                                         </div>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 text-gray-200">{item.recordedby}</td>
+                                <td className="px-6 py-4 text-gray-200">{item.recorded_by}</td>
                             </tr>
                         ))}
                     </tbody>
