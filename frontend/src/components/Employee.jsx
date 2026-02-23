@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { NotifContext } from '../Context.jsx';
 import AddEmployee from './AddEmployee';
 
 const Employee = () => {
+  const { addToNotifs } = useContext(NotifContext);
   const [employees, setEmployees] = useState([]);
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
@@ -31,6 +33,8 @@ const Employee = () => {
       }
       catch (error) {
         console.error(error);
+
+        addToNotifs({ message: "Server error while fetching employees.", bgcolor: "bg-red-600" });
       }
     };
 
@@ -62,13 +66,17 @@ const Employee = () => {
 
         if (!res.ok) {
           setEmployees(previousEmployees);
-          console.log(data.message);
-          if ("errors" in data) console.log(data.errors);
+
+          addToNotifs({ message: data.message || "Failed to update employee.", bgcolor: "bg-red-600" });
+        } else {
+          addToNotifs({ message: data.message || "Employee updated successfully.", bgcolor: "bg-green-600" });
         }
       }
       catch (error) {
         setEmployees(previousEmployees);
         console.error(error);
+
+        addToNotifs({ message: "Server error while updating employee.", bgcolor: "bg-red-600" });
       }
     }
     :
@@ -89,13 +97,17 @@ const Employee = () => {
 
         if (!res.ok) {
           setEmployees(previousEmployees);
-          console.log(data.message);
-          if ("errors" in data) console.log(data.errors);
+
+          addToNotifs({ message: data.message || "Failed to add employee.", bgcolor: "bg-red-600" });
+        } else {
+          addToNotifs({ message: data.message || "Employee added successfully.", bgcolor: "bg-green-600" });
         }
       }
       catch (error) {
         setEmployees(previousEmployees);
         console.error(error);
+
+        addToNotifs({ message: "Server error while adding employee.", bgcolor: "bg-red-600" });
       }
     };
 
@@ -124,11 +136,15 @@ const Employee = () => {
 
       if (!res.ok) {
         setEmployees(previousEmployees);
+
+        addToNotifs({ message: data.message || "Failed to delete employee.", bgcolor: "bg-red-600" });
       }
     }
     catch (error) {
       setEmployees(previousEmployees);
       console.error(error);
+
+      addToNotifs({ message: "Server error while deleting employee.", bgcolor: "bg-red-600" });
     }
   };
 
