@@ -39,7 +39,6 @@ return new class extends Migration
             EXECUTE FUNCTION check_created_at_order();
 
 
-
             CREATE OR REPLACE FUNCTION auto_create_membership_subscription()
             RETURNS TRIGGER AS $$
             BEGIN
@@ -70,30 +69,6 @@ return new class extends Migration
             FOR EACH ROW
             WHEN (OLD.plan_type IS DISTINCT FROM NEW.plan_type)
             EXECUTE FUNCTION auto_create_membership_subscription();
-
-
-
-            ALTER TABLE \"Transaction\" ADD COLUMN session_id BIGINT;
-            ALTER TABLE \"Transaction\" ADD COLUMN subscription_id BIGINT;
-
-            ALTER TABLE \"Transaction\"
-            ADD CONSTRAINT Transaction_session_id_fkey
-            FOREIGN KEY (session_id) REFERENCES \"WorkoutSession\" (id)
-            ON UPDATE CASCADE ON DELETE CASCADE;
-
-            ALTER TABLE \"Transaction\"
-            ADD CONSTRAINT Transaction_subscription_id_fkey
-            FOREIGN KEY (subscription_id) REFERENCES \"MembershipSubscription\" (id)
-            ON UPDATE CASCADE ON DELETE CASCADE;
-
-            ALTER TABLE \"Transaction\"
-            ADD CONSTRAINT check_one_transaction_target
-            CHECK (
-                (session_id IS NOT NULL AND subscription_id IS NULL)
-                OR
-                (session_id IS NULL AND subscription_id IS NOT NULL)
-            );
-
 
 
             CREATE OR REPLACE FUNCTION validate_transaction_datetime()
@@ -127,18 +102,6 @@ return new class extends Migration
             FOR EACH ROW
             EXECUTE FUNCTION validate_transaction_datetime();
 
-            
-
-            CREATE SEQUENCE IF NOT EXISTS transaction_reference_seq START 1;
-
-            ALTER TABLE \"Transaction\"
-            ALTER COLUMN reference_number
-            SET DEFAULT (
-                'TXN-' || LPAD(nextval('transaction_reference_seq')::text, 6, '0')
-            );
-
-
-
             CREATE OR REPLACE FUNCTION create_workout_session_on_customer_insert()
             RETURNS TRIGGER AS $$
             BEGIN
@@ -160,11 +123,6 @@ return new class extends Migration
             FOR EACH ROW
             EXECUTE FUNCTION create_workout_session_on_customer_insert();
 
-
-
-            ALTER TABLE public.\"Customer\"
-            ADD CONSTRAINT workout_date_not_past_check
-            CHECK (\"created_at\" >= CURRENT_TIMESTAMP);
         ");
     }
 
