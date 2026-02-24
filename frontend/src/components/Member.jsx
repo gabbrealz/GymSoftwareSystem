@@ -1,15 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import AddMember from './AddMember'
 import UpdateMember from './UpdateMember'
+import { AuthContext } from './../Context.jsx';
 
 const Member = () => {
+    const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
     const [members, setMembers] = useState([])
     const [isAddMemberOpen, setIsAddMemberOpen] = useState(false)
     const [editingMember, setEditingMember] = useState(null)
 
     useEffect(() => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
         
         const fetchData = async () => {
             let res, data;
@@ -29,6 +34,7 @@ const Member = () => {
                 }
                 else {
                     console.log(data.message);
+                    if (res.status === 401) forceLogout();
                 }
             }
             catch (error) {
@@ -40,8 +46,11 @@ const Member = () => {
     }, []);
 
     const handleAddMember = async (formData) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
 
         console.log(formData);
 
@@ -65,6 +74,7 @@ const Member = () => {
             else {
                 console.log(data.message);
                 if ("errors" in data) console.log(data.errors);
+                if (res.status === 401) forceLogout();
             }
         }
         catch (error) {
@@ -76,9 +86,11 @@ const Member = () => {
     };
 
     const handleUpdateMember = async (formData) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
-
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
         console.log(formData);
 
         const previousMembers = members;
@@ -102,6 +114,7 @@ const Member = () => {
                 setMembers(previousMembers);
                 console.log(data.message);
                 if ("errors" in data) console.log(data.errors);
+                if (res.status === 401) forceLogout();
             }
         }
         catch (error) {
@@ -113,9 +126,11 @@ const Member = () => {
     };
 
     const handleDeleteMember = async (memberId) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
-
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
         console.log(formData);
 
         const previousMembers = members;
@@ -135,6 +150,7 @@ const Member = () => {
 
             if (!res.ok) {
                 setEmployees(previousMembers);
+                if (res.status === 401) forceLogout();
             }
         }
         catch (error) {

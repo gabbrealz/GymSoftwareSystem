@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import AttendanceChart from './AttendanceChart';
 import AddLog from './AddLog';
+import { AuthContext } from './../Context.jsx';
 
 const GymLog = () => {
+    const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
     const [month, setMonth] = useState(() => {
         const now = new Date();
         return now.toISOString().slice(0, 7);
@@ -12,8 +14,11 @@ const GymLog = () => {
     const [isAddLogOpen, setIsAddLogOpen] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
 
         const fetchData = async () => {
             let res, data;
@@ -33,6 +38,7 @@ const GymLog = () => {
                 }
                 else {
                     console.log(data.message);
+                    if (res.status === 401) forceLogout();
                 }
             }
             catch (error) {
@@ -44,8 +50,11 @@ const GymLog = () => {
     }, []);
 
     const handleAddLog = (formData) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
 
         const fetchData = async () => {
             let res, data;
@@ -65,8 +74,9 @@ const GymLog = () => {
                 if (res.ok) {
                     setLogs(prev => [...prev, data.new_log]);
                 }
-                else if ("errors" in data) {
-                    console.log(data.errors);
+                else {
+                    if ("errors" in data) console.log(data.errors);
+                    if (res.status === 401) forceLogout();
                 }
             }
             catch (error) {
@@ -78,8 +88,11 @@ const GymLog = () => {
     };
 
     const handleDeleteLog = (log_id) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
 
         const oldData = logs;
         setLogs(prev => prev.filter(log => log.id !== log_id));
@@ -102,6 +115,7 @@ const GymLog = () => {
                     setLogs(oldData);
                     console.log(data.message);
                     if ("errors" in data) console.log(data.errors);
+                    if (res.status === 401) forceLogout();
                 }
             }
             catch (error) {

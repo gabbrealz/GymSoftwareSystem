@@ -1,14 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import AddEmployee from './AddEmployee';
+import { AuthContext } from './../Context.jsx';
 
 const Employee = () => {
+  const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
   const [employees, setEmployees] = useState([]);
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-    if (token === null) return;
+    const token = getAuthToken();
+    if (token === null) {
+      setIsAuthenticated(false);
+      return;
+    }
 
     const fetchData = async () => {
       let res, data;
@@ -27,6 +32,7 @@ const Employee = () => {
         }
         else {
           console.log(data.message);
+          if (res.status === 401) forceLogout();
         }
       }
       catch (error) {
@@ -38,8 +44,11 @@ const Employee = () => {
   }, []);
 
   const handleSaveEmployee = (formData) => {
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-    if (token === null) return;
+    const token = getAuthToken();
+    if (token === null) {
+      setIsAuthenticated(false);
+      return;
+    }
 
     const previousEmployees = employees;
     let res, data;
@@ -64,6 +73,7 @@ const Employee = () => {
           setEmployees(previousEmployees);
           console.log(data.message);
           if ("errors" in data) console.log(data.errors);
+          if (res.status === 401) forceLogout();
         }
       }
       catch (error) {
@@ -91,6 +101,7 @@ const Employee = () => {
           setEmployees(previousEmployees);
           console.log(data.message);
           if ("errors" in data) console.log(data.errors);
+          if (res.status === 401) forceLogout();
         }
       }
       catch (error) {
@@ -104,8 +115,11 @@ const Employee = () => {
   };
 
   const handleDeleteEmployee = async (employeeId) => {
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-    if (token === null) return;
+    const token = getAuthToken();
+    if (token === null) {
+      setIsAuthenticated(false);
+      return;
+    }
 
     const previousEmployees = employees;
 
@@ -124,6 +138,7 @@ const Employee = () => {
 
       if (!res.ok) {
         setEmployees(previousEmployees);
+        if (res.status === 401) forceLogout();
       }
     }
     catch (error) {
