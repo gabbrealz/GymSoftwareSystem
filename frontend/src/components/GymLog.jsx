@@ -35,7 +35,7 @@ const GymLog = () => {
                     setLogs(data);
                 }
                 else {
-                    addToNotifs({ message: data.message ||"Failed to load gym logd.", bgcolor: "bg-red-600" });
+                    addToNotifs({ message: "Failed to load gym logs.", bgcolor: "bg-red-600" });
                 }
             }
             catch (error) {
@@ -70,7 +70,7 @@ const GymLog = () => {
                 if (res.ok) {
                     setLogs(prev => [...prev, data.new_log]);
 
-                    addToNotifs({ message: data.message || "Log added successfully.", bgcolor: "bg-green-600" });
+                    addToNotifs({ message: "Log added successfully.", bgcolor: "bg-green-600" });
                 }
                 else if ("errors" in data) {
                     console.log(data.errors);
@@ -80,7 +80,7 @@ const GymLog = () => {
             }
             catch (error) {
                 console.error(error);
-                addToNotifs({ "Server error": "An error occurred while adding the log.", bgcolor: "bg-red-600" });
+                addToNotifs({ message: "An error occurred while adding the log.", bgcolor: "bg-red-600" });
             }
         };
 
@@ -114,9 +114,9 @@ const GymLog = () => {
                 if (!res.ok) {
                     setLogs(oldData);
 
-                    addToNotifs({ message: data.message || "Failed to delete log.", bgcolor: "bg-red-600" });
+                    addToNotifs({ message: "Failed to delete log.", bgcolor: "bg-red-600" });
                 } else {
-                    addToNotifs({ message: data.message || "Log deleted successfully.", bgcolor: "bg-green-600" });
+                    addToNotifs({ message: "Log deleted successfully.", bgcolor: "bg-green-600" });
                 }
             }
             catch (error) {
