@@ -1,9 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
+import { AuthContext, NotifContext } from '../Context.jsx';
 import AddEmployee from './AddEmployee';
-import { AuthContext } from './../Context.jsx';
 
 const Employee = () => {
   const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
+  const { addToNotifs } = useContext(NotifContext);
   const [employees, setEmployees] = useState([]);
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
@@ -37,6 +38,8 @@ const Employee = () => {
       }
       catch (error) {
         console.error(error);
+
+        addToNotifs({ message: "Server error while fetching employees.", bgcolor: "bg-red-600" });
       }
     };
 
@@ -74,11 +77,17 @@ const Employee = () => {
           console.log(data.message);
           if ("errors" in data) console.log(data.errors);
           if (res.status === 401) forceLogout();
+
+          addToNotifs({ message: data.message || "Failed to update employee.", bgcolor: "bg-red-600" });
+        } else {
+          addToNotifs({ message: data.message || "Employee updated successfully.", bgcolor: "bg-green-600" });
         }
       }
       catch (error) {
         setEmployees(previousEmployees);
         console.error(error);
+
+        addToNotifs({ message: "Server error while updating employee.", bgcolor: "bg-red-600" });
       }
     }
     :
@@ -102,11 +111,17 @@ const Employee = () => {
           console.log(data.message);
           if ("errors" in data) console.log(data.errors);
           if (res.status === 401) forceLogout();
+
+          addToNotifs({ message: data.message || "Failed to add employee.", bgcolor: "bg-red-600" });
+        } else {
+          addToNotifs({ message: data.message || "Employee added successfully.", bgcolor: "bg-green-600" });
         }
       }
       catch (error) {
         setEmployees(previousEmployees);
         console.error(error);
+
+        addToNotifs({ message: "Server error while adding employee.", bgcolor: "bg-red-600" });
       }
     };
 
@@ -139,11 +154,15 @@ const Employee = () => {
       if (!res.ok) {
         setEmployees(previousEmployees);
         if (res.status === 401) forceLogout();
+
+        addToNotifs({ message: data.message || "Failed to delete employee.", bgcolor: "bg-red-600" });
       }
     }
     catch (error) {
       setEmployees(previousEmployees);
       console.error(error);
+
+      addToNotifs({ message: "Server error while deleting employee.", bgcolor: "bg-red-600" });
     }
   };
 

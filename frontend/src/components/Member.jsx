@@ -1,10 +1,11 @@
 import { useState, useEffect, useContext } from 'react'
+import { AuthContext, NotifContext } from '../Context.jsx'
 import AddMember from './AddMember'
 import UpdateMember from './UpdateMember'
-import { AuthContext } from './../Context.jsx';
 
 const Member = () => {
     const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
+    const { addToNotifs } = useContext(NotifContext);
     const [members, setMembers] = useState([])
     const [isAddMemberOpen, setIsAddMemberOpen] = useState(false)
     const [editingMember, setEditingMember] = useState(null)
@@ -70,16 +71,22 @@ const Member = () => {
 
             if (res.ok) {
                 setMembers(prev => [...prev, data.new_member]);
+
+                addToNotifs({ message: data.message || "Member added successfully.", bgcolor: "bg-green-600" });
             }
             else {
                 console.log(data.message);
                 if ("errors" in data) console.log(data.errors);
                 if (res.status === 401) forceLogout();
+
+                addToNotifs({ message: data.message || "Failed to add member.", bgcolor: "bg-red-600" });
             }
         }
         catch (error) {
-            setEmployees(previousEmployees);
+            setMembers(previousMembers);
             console.error(error);
+
+            addToNotifs({ message: "Server error while adding member.", bgcolor: "bg-red-600" });
         }
 
         setIsAddMemberOpen(false);
@@ -115,11 +122,17 @@ const Member = () => {
                 console.log(data.message);
                 if ("errors" in data) console.log(data.errors);
                 if (res.status === 401) forceLogout();
+
+                addToNotifs({ message: data.message || "Failed to update member.", bgcolor: "bg-red-600" });
+            } else {
+                addToNotifs({ message: data.message || "Member updated successfully.", bgcolor: "bg-green-600" });
             }
         }
         catch (error) {
             setMembers(previousMembers);
             console.error(error);
+
+            addToNotifs({ message: "Server error while updating member.", bgcolor: "bg-red-600" });
         }
 
         setEditingMember(null);
@@ -151,11 +164,17 @@ const Member = () => {
             if (!res.ok) {
                 setEmployees(previousMembers);
                 if (res.status === 401) forceLogout();
+
+                addToNotifs({ message: data.message || "Failed to delete member.", bgcolor: "bg-red-600" });
+            } else {
+                addToNotifs({ message: data.message || "Member deleted successfully.", bgcolor: "bg-green-600" });
             }
         }
         catch (error) {
             setEmployees(previousMembers);
             console.error(error);
+
+            addToNotifs({ message: "Server error while deleting member.", bgcolor: "bg-red-600" });
         }        
     };
 

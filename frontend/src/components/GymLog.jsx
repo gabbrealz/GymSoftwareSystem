@@ -1,10 +1,12 @@
 import { useState, useEffect, useContext } from 'react';
+import { AuthContext, NotifContext } from '../Context.jsx';
 import AttendanceChart from './AttendanceChart';
 import AddLog from './AddLog';
-import { AuthContext } from './../Context.jsx';
 
 const GymLog = () => {
     const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
+    const { addToNotifs } = useContext(NotifContext);
+
     const [month, setMonth] = useState(() => {
         const now = new Date();
         return now.toISOString().slice(0, 7);
@@ -39,10 +41,13 @@ const GymLog = () => {
                 else {
                     console.log(data.message);
                     if (res.status === 401) forceLogout();
+                    addToNotifs({ message: data.message ||"Failed to load gym logd.", bgcolor: "bg-red-600" });
                 }
             }
             catch (error) {
                 console.error(error);
+
+                addToNotifs({ message: "An error occurred while loading gym logs.", bgcolor: "bg-red-600" });
             }
         };
 
@@ -73,14 +78,18 @@ const GymLog = () => {
                 
                 if (res.ok) {
                     setLogs(prev => [...prev, data.new_log]);
+
+                    addToNotifs({ message: data.message || "Log added successfully.", bgcolor: "bg-green-600" });
                 }
                 else {
                     if ("errors" in data) console.log(data.errors);
                     if (res.status === 401) forceLogout();
+                    addToNotifs({ message: Object.values(data.errors).flat().join(", "), bgcolor: "bg-red-600" });
                 }
             }
             catch (error) {
                 console.error(error);
+                addToNotifs({ "Server error": "An error occurred while adding the log.", bgcolor: "bg-red-600" });
             }
         };
 
@@ -90,6 +99,7 @@ const GymLog = () => {
     const handleDeleteLog = (log_id) => {
         const token = getAuthToken();
         if (token === null) {
+            addToNotifs({ message: "Session expired. Please log in again.", bgcolor: "bg-red-600" });
             setIsAuthenticated(false);
             return;
         }
@@ -116,10 +126,16 @@ const GymLog = () => {
                     console.log(data.message);
                     if ("errors" in data) console.log(data.errors);
                     if (res.status === 401) forceLogout();
+
+                    addToNotifs({ message: data.message || "Failed to delete log.", bgcolor: "bg-red-600" });
+                } else {
+                    addToNotifs({ message: data.message || "Log deleted successfully.", bgcolor: "bg-green-600" });
                 }
             }
             catch (error) {
                 console.error(error);
+
+                addToNotifs({ message: "Server error while deleting log.", bgcolor: "bg-red-600" });
             }
         };
 
