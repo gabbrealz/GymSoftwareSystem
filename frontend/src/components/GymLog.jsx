@@ -1,9 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
-import { NotifContext } from '../Context.jsx';
+import { AuthContext, NotifContext } from '../Context.jsx';
 import AttendanceChart from './AttendanceChart';
 import AddLog from './AddLog';
 
 const GymLog = () => {
+    const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
     const { addToNotifs } = useContext(NotifContext);
 
     const [month, setMonth] = useState(() => {
@@ -15,8 +16,11 @@ const GymLog = () => {
     const [isAddLogOpen, setIsAddLogOpen] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
 
         const fetchData = async () => {
             let res, data;
@@ -35,7 +39,13 @@ const GymLog = () => {
                     setLogs(data);
                 }
                 else {
+<<<<<<< HEAD
                     addToNotifs({ message: "Failed to load gym logs.", bgcolor: "bg-red-600" });
+=======
+                    console.log(data.message);
+                    if (res.status === 401) forceLogout();
+                    addToNotifs({ message: data.message ||"Failed to load gym logd.", bgcolor: "bg-red-600" });
+>>>>>>> 84de6c0d30cd583382a8d16c1df4d070b98d6bf9
                 }
             }
             catch (error) {
@@ -49,8 +59,11 @@ const GymLog = () => {
     }, []);
 
     const handleAddLog = (formData) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
 
         const fetchData = async () => {
             let res, data;
@@ -72,9 +85,9 @@ const GymLog = () => {
 
                     addToNotifs({ message: "Log added successfully.", bgcolor: "bg-green-600" });
                 }
-                else if ("errors" in data) {
-                    console.log(data.errors);
-
+                else {
+                    if ("errors" in data) console.log(data.errors);
+                    if (res.status === 401) forceLogout();
                     addToNotifs({ message: Object.values(data.errors).flat().join(", "), bgcolor: "bg-red-600" });
                 }
             }
@@ -88,9 +101,10 @@ const GymLog = () => {
     };
 
     const handleDeleteLog = (log_id) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
+        const token = getAuthToken();
         if (token === null) {
             addToNotifs({ message: "Session expired. Please log in again.", bgcolor: "bg-red-600" });
+            setIsAuthenticated(false);
             return;
         }
 
@@ -113,6 +127,9 @@ const GymLog = () => {
                 
                 if (!res.ok) {
                     setLogs(oldData);
+                    console.log(data.message);
+                    if ("errors" in data) console.log(data.errors);
+                    if (res.status === 401) forceLogout();
 
                     addToNotifs({ message: "Failed to delete log.", bgcolor: "bg-red-600" });
                 } else {

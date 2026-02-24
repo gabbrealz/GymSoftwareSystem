@@ -2,12 +2,12 @@ import { useState, useEffect, useContext } from 'react'
 import LoginForm from './Login.jsx'
 import Dashboard from './Dashboard.jsx'
 import './App.css'  
-import { NotifContext } from './Context.jsx';
+import { AuthContext, NotifContext } from './Context.jsx';
 import Notifications from './components/Notifications.jsx'
 
 function App() {
   const { addToNotifs } = useContext(NotifContext);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated, setIsAuthenticated, getAuthToken } = useContext(AuthContext);
 
   useEffect(() => {
     if (localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME)) {
@@ -39,7 +39,7 @@ function App() {
 
       } else {
         addToNotifs({
-          message: data.message || "Invalid email or password.",
+          message: "Invalid email or password.",
           bgcolor: "bg-red-600"
         });
       }
@@ -55,8 +55,11 @@ function App() {
   };
 
   const handleLogout = async () => {
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-    if (token === null) return;
+    const token = getAuthToken();
+    if (token === null) {
+      setIsAuthenticated(false);
+      return;
+    }
 
     let res, data;
     

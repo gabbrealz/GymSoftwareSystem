@@ -1,17 +1,21 @@
 import { useState, useEffect, useContext } from 'react'
-import { NotifContext } from '../Context.jsx'
+import { AuthContext, NotifContext } from '../Context.jsx'
 import AddMember from './AddMember'
 import UpdateMember from './UpdateMember'
 
 const Member = () => {
+    const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
     const { addToNotifs } = useContext(NotifContext);
     const [members, setMembers] = useState([])
     const [isAddMemberOpen, setIsAddMemberOpen] = useState(false)
     const [editingMember, setEditingMember] = useState(null)
 
     useEffect(() => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
         
         const fetchData = async () => {
             let res, data;
@@ -31,6 +35,7 @@ const Member = () => {
                 }
                 else {
                     console.log(data.message);
+                    if (res.status === 401) forceLogout();
                 }
             }
             catch (error) {
@@ -42,8 +47,11 @@ const Member = () => {
     }, []);
 
     const handleAddMember = async (formData) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
 
         console.log(formData);
 
@@ -69,6 +77,7 @@ const Member = () => {
             else {
                 console.log(data.message);
                 if ("errors" in data) console.log(data.errors);
+                if (res.status === 401) forceLogout();
 
                 addToNotifs({ message: "Failed to add member.", bgcolor: "bg-red-600" });
             }
@@ -84,9 +93,11 @@ const Member = () => {
     };
 
     const handleUpdateMember = async (formData) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
-
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
         console.log(formData);
 
         const previousMembers = members;
@@ -109,6 +120,8 @@ const Member = () => {
             if (!res.ok) {
                 setMembers(previousMembers);
                 console.log(data.message);
+                if ("errors" in data) console.log(data.errors);
+                if (res.status === 401) forceLogout();
 
                 addToNotifs({ message: "Failed to update member.", bgcolor: "bg-red-600" });
             } else {
@@ -126,9 +139,11 @@ const Member = () => {
     };
 
     const handleDeleteMember = async (memberId) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
-
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
         console.log(formData);
 
         const previousMembers = members;
@@ -148,6 +163,7 @@ const Member = () => {
 
             if (!res.ok) {
                 setEmployees(previousMembers);
+                if (res.status === 401) forceLogout();
 
                 addToNotifs({ message: "Failed to delete member.", bgcolor: "bg-red-600" });
             } else {

@@ -16,6 +16,7 @@ class TransactionController extends Controller
                     t.id,
                     t.reference_number,
                     t.date_time,
+                    t.paid_amount,
                     CASE
                         WHEN t.session_id IS NOT NULL AND t.subscription_id IS NULL THEN 'Workout Session'
                         WHEN t.session_id IS NULL AND t.subscription_id IS NOT NULL THEN 'Membership Payment'

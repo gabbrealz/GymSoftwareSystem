@@ -1,16 +1,20 @@
 import { useState, useEffect, useContext } from 'react';
-import { NotifContext } from '../Context.jsx';
+import { AuthContext, NotifContext } from '../Context.jsx';
 import AddEmployee from './AddEmployee';
 
 const Employee = () => {
+  const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
   const { addToNotifs } = useContext(NotifContext);
   const [employees, setEmployees] = useState([]);
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-    if (token === null) return;
+    const token = getAuthToken();
+    if (token === null) {
+      setIsAuthenticated(false);
+      return;
+    }
 
     const fetchData = async () => {
       let res, data;
@@ -29,6 +33,7 @@ const Employee = () => {
         }
         else {
           console.log(data.message);
+          if (res.status === 401) forceLogout();
         }
       }
       catch (error) {
@@ -42,8 +47,11 @@ const Employee = () => {
   }, []);
 
   const handleSaveEmployee = (formData) => {
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-    if (token === null) return;
+    const token = getAuthToken();
+    if (token === null) {
+      setIsAuthenticated(false);
+      return;
+    }
 
     const previousEmployees = employees;
     let res, data;
@@ -66,6 +74,9 @@ const Employee = () => {
 
         if (!res.ok) {
           setEmployees(previousEmployees);
+          console.log(data.message);
+          if ("errors" in data) console.log(data.errors);
+          if (res.status === 401) forceLogout();
 
           addToNotifs({ message: "Failed to update employee.", bgcolor: "bg-red-600" });
         } else {
@@ -97,6 +108,9 @@ const Employee = () => {
 
         if (!res.ok) {
           setEmployees(previousEmployees);
+          console.log(data.message);
+          if ("errors" in data) console.log(data.errors);
+          if (res.status === 401) forceLogout();
 
           addToNotifs({ message: "Failed to add employee.", bgcolor: "bg-red-600" });
         } else {
@@ -116,8 +130,11 @@ const Employee = () => {
   };
 
   const handleDeleteEmployee = async (employeeId) => {
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-    if (token === null) return;
+    const token = getAuthToken();
+    if (token === null) {
+      setIsAuthenticated(false);
+      return;
+    }
 
     const previousEmployees = employees;
 
@@ -136,6 +153,7 @@ const Employee = () => {
 
       if (!res.ok) {
         setEmployees(previousEmployees);
+        if (res.status === 401) forceLogout();
 
         addToNotifs({ message: "Failed to delete employee.", bgcolor: "bg-red-600" });
       }

@@ -1,12 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from './../Context.jsx';
 
 
 const Transactions = () => {
+    const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
     const [txn, setTxn] = useState([]);
 
     useEffect(() => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
 
         const fetchData = async () => {
             let res, data;
@@ -26,6 +31,7 @@ const Transactions = () => {
                 }
                 else {
                     console.log(data.message);
+                    if (res.status === 401) forceLogout();
                 }
             }
             catch (error) {
@@ -37,8 +43,11 @@ const Transactions = () => {
     }, []);
 
     const handleUpdateStatus = async (txnId, newStatus) => {
-        const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-        if (token === null) return;
+        const token = getAuthToken();
+        if (token === null) {
+            setIsAuthenticated(false);
+            return;
+        }
 
         let res, data;
 
@@ -61,6 +70,7 @@ const Transactions = () => {
                 setTxn(previousTransactions);
                 console.log(data.message);
                 if ("errors" in data) console.log(data.errors);
+                if (res.status === 401) forceLogout();
             }
         }
         catch (error) {
