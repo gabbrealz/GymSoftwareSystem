@@ -105,5 +105,6 @@ class GymLogController extends Controller
             error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
         }
+        return response()->json(['message' => 'Gym log deleted successfully!']);
     }
 }
