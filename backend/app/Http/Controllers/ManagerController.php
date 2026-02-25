@@ -97,6 +97,8 @@ class ManagerController extends Controller
             error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
         }
+
+        return response()->json(['message' => 'Employee updated successfully!']);
     }
 
     public function delete_employee(Employee $employee) {

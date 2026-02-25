@@ -188,6 +188,8 @@ class MemberController extends Controller
             error_log($e->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
         }
+
+        return response()->json(['message' => 'Member updated successfully!']);
     }
 
     public function delete_member(Member $member) {
