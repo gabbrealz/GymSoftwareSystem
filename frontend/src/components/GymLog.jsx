@@ -39,13 +39,9 @@ const GymLog = () => {
                     setLogs(data);
                 }
                 else {
-<<<<<<< HEAD
-                    addToNotifs({ message: "Failed to load gym logs.", bgcolor: "bg-red-600" });
-=======
                     console.log(data.message);
                     if (res.status === 401) forceLogout();
-                    addToNotifs({ message: data.message ||"Failed to load gym logd.", bgcolor: "bg-red-600" });
->>>>>>> 84de6c0d30cd583382a8d16c1df4d070b98d6bf9
+                    addToNotifs({ message: data.message || "Failed to load gym logs.", bgcolor: "bg-red-600" });
                 }
             }
             catch (error) {
