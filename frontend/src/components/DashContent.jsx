@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import AttendanceChart from "./AttendanceChart";
 import InventoryAnalytics from "./ProductInventory";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import { AuthContext } from "../Context.jsx";
 
 const DashContent = () => {
+  const { getAuthToken, setIsAuthenticated, forceLogout } = useContext(AuthContext);
   const [month, setMonth] = useState(() => {
     const now = new Date();
     return now.toISOString().slice(0, 7); // YYYY-MM
@@ -14,9 +16,11 @@ const DashContent = () => {
   const [range, setRange] = useState("weekly");
 
   useEffect(() => {
-    const token =
-      localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_VAR_NAME) || null;
-    if (!token) return;
+    const token = getAuthToken();
+    if (token === null) {
+      setIsAuthenticated(false);
+      return;
+    }
 
     const fetchLogs = async () => {
       try {
@@ -33,6 +37,8 @@ const DashContent = () => {
 
         const data = await res.json();
         if (res.ok) setLogs(data);
+        else if (res.status === 401) forceLogout();
+        
       } catch (error) {
         console.error(error);
       }
