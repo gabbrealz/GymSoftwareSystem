@@ -194,6 +194,7 @@ class MemberController extends Controller
 
     public function delete_member(Member $member) {
         try {
+            MembershipSubscription::where('member_id', '=', $member->id)->delete();
             $member->delete();
             Cache::forget('members');
         }
