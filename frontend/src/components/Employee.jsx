@@ -78,9 +78,9 @@ const Employee = () => {
           if ("errors" in data) console.log(data.errors);
           if (res.status === 401) forceLogout();
 
-          addToNotifs({ message: data.message || "Failed to update employee.", bgcolor: "bg-red-600" });
+          addToNotifs({ message: "Failed to update employee.", bgcolor: "bg-red-600" });
         } else {
-          addToNotifs({ message: data.message || "Employee updated successfully.", bgcolor: "bg-green-600" });
+          addToNotifs({ message: "Employee updated successfully.", bgcolor: "bg-green-600" });
         }
       }
       catch (error) {
@@ -112,9 +112,9 @@ const Employee = () => {
           if ("errors" in data) console.log(data.errors);
           if (res.status === 401) forceLogout();
 
-          addToNotifs({ message: data.message || "Failed to add employee.", bgcolor: "bg-red-600" });
+          addToNotifs({ message: "Failed to add employee.", bgcolor: "bg-red-600" });
         } else {
-          addToNotifs({ message: data.message || "Employee added successfully.", bgcolor: "bg-green-600" });
+          addToNotifs({ message: "Employee added successfully.", bgcolor: "bg-green-600" });
         }
       }
       catch (error) {
@@ -155,7 +155,7 @@ const Employee = () => {
         setEmployees(previousEmployees);
         if (res.status === 401) forceLogout();
 
-        addToNotifs({ message: data.message || "Failed to delete employee.", bgcolor: "bg-red-600" });
+        addToNotifs({ message: "Failed to delete employee.", bgcolor: "bg-red-600" });
       }
     }
     catch (error) {

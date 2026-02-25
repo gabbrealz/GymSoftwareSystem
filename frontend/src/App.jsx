@@ -39,7 +39,7 @@ function App() {
 
       } else {
         addToNotifs({
-          message: data.message || "Invalid email or password.",
+          message: "Invalid email or password.",
           bgcolor: "bg-red-600"
         });
       }

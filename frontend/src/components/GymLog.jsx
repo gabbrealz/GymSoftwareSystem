@@ -39,9 +39,13 @@ const GymLog = () => {
                     setLogs(data);
                 }
                 else {
+<<<<<<< HEAD
+                    addToNotifs({ message: "Failed to load gym logs.", bgcolor: "bg-red-600" });
+=======
                     console.log(data.message);
                     if (res.status === 401) forceLogout();
                     addToNotifs({ message: data.message ||"Failed to load gym logd.", bgcolor: "bg-red-600" });
+>>>>>>> 84de6c0d30cd583382a8d16c1df4d070b98d6bf9
                 }
             }
             catch (error) {
@@ -79,7 +83,7 @@ const GymLog = () => {
                 if (res.ok) {
                     setLogs(prev => [...prev, data.new_log]);
 
-                    addToNotifs({ message: data.message || "Log added successfully.", bgcolor: "bg-green-600" });
+                    addToNotifs({ message: "Log added successfully.", bgcolor: "bg-green-600" });
                 }
                 else {
                     if ("errors" in data) console.log(data.errors);
@@ -89,7 +93,7 @@ const GymLog = () => {
             }
             catch (error) {
                 console.error(error);
-                addToNotifs({ "Server error": "An error occurred while adding the log.", bgcolor: "bg-red-600" });
+                addToNotifs({ message: "An error occurred while adding the log.", bgcolor: "bg-red-600" });
             }
         };
 
@@ -127,9 +131,9 @@ const GymLog = () => {
                     if ("errors" in data) console.log(data.errors);
                     if (res.status === 401) forceLogout();
 
-                    addToNotifs({ message: data.message || "Failed to delete log.", bgcolor: "bg-red-600" });
+                    addToNotifs({ message: "Failed to delete log.", bgcolor: "bg-red-600" });
                 } else {
-                    addToNotifs({ message: data.message || "Log deleted successfully.", bgcolor: "bg-green-600" });
+                    addToNotifs({ message: "Log deleted successfully.", bgcolor: "bg-green-600" });
                 }
             }
             catch (error) {

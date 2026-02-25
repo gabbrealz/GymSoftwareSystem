@@ -72,14 +72,14 @@ const Member = () => {
             if (res.ok) {
                 setMembers(prev => [...prev, data.new_member]);
 
-                addToNotifs({ message: data.message || "Member added successfully.", bgcolor: "bg-green-600" });
+                addToNotifs({ message: "Member added successfully.", bgcolor: "bg-green-600" });
             }
             else {
                 console.log(data.message);
                 if ("errors" in data) console.log(data.errors);
                 if (res.status === 401) forceLogout();
 
-                addToNotifs({ message: data.message || "Failed to add member.", bgcolor: "bg-red-600" });
+                addToNotifs({ message: "Failed to add member.", bgcolor: "bg-red-600" });
             }
         }
         catch (error) {
@@ -123,9 +123,9 @@ const Member = () => {
                 if ("errors" in data) console.log(data.errors);
                 if (res.status === 401) forceLogout();
 
-                addToNotifs({ message: data.message || "Failed to update member.", bgcolor: "bg-red-600" });
+                addToNotifs({ message: "Failed to update member.", bgcolor: "bg-red-600" });
             } else {
-                addToNotifs({ message: data.message || "Member updated successfully.", bgcolor: "bg-green-600" });
+                addToNotifs({ message: "Member updated successfully.", bgcolor: "bg-green-600" });
             }
         }
         catch (error) {
@@ -165,9 +165,9 @@ const Member = () => {
                 setEmployees(previousMembers);
                 if (res.status === 401) forceLogout();
 
-                addToNotifs({ message: data.message || "Failed to delete member.", bgcolor: "bg-red-600" });
+                addToNotifs({ message: "Failed to delete member.", bgcolor: "bg-red-600" });
             } else {
-                addToNotifs({ message: data.message || "Member deleted successfully.", bgcolor: "bg-green-600" });
+                addToNotifs({ message: "Member deleted successfully.", bgcolor: "bg-green-600" });
             }
         }
         catch (error) {
