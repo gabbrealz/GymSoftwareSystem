@@ -144,7 +144,6 @@ const Member = () => {
             setIsAuthenticated(false);
             return;
         }
-        console.log(formData);
 
         const previousMembers = members;
         setMembers(prev => prev.filter(mem => mem.id !== memberId));
