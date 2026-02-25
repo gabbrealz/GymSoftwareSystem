@@ -25,18 +25,6 @@ class ManagerController extends Controller
         }
     }
 
-    public function get_employee(Employee $employee) {
-        $this->authorize('view', $employee);
-
-        try {
-            return response()->json($employee);
-        }
-        catch (\Exception $e) {
-            error_log($e->getMessage());
-            return response()->json(['message' => 'Something went wrong'], 500);
-        }
-    }
-
     public function create_employee(Request $request) {
         $this->authorize('create', Employee::class);
 
