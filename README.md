@@ -5,13 +5,23 @@ This gym management project was developed for Sertfit Athletics Gym and Sports H
 
 The software allows the gym to easily manage customer and employee information, record workout sessions, and handle membership subscriptions. Overall, the system makes work faster, reduces errors, and helps the gym provide better service to its customers.
 
+## Check it out!
+The project's frontend is currently deployed in GitHub pages. Access it using this link:
+```
+https://gabbrealz.github.io/GymSoftwareSystem/
+```
+You can also interact with the backend API directly using this base URL:
+```
+https://sertfitgym.onrender.com
+```
+
 ## Tech Stack
 - Frontend: Vite React and Tailwind CSS. Deployed using GitHub Pages
 - Backend: PHP Laravel. Deployed using Render
 - Database: PostgreSQL. Deployed using Supabase
 
 ## API Endpoint Documentation
-All endpoints, aside from the `/api/login` endpoint, require a `Bearer` token in the `Authorization` header of requests. This Bearer token is issued upon a successful login request.
+All endpoints, aside from the `/api/login` endpoint, require a `Bearer` token in the `Authorization` header of requests. You can get a valid Bearer token by authenticating via a login request.
 
 ### Authentication
 
@@ -137,3 +147,43 @@ Endpoints for the employee model require authenticating as an account recognized
             "status": < value must either be 'Paid', 'Pending', 'Failed' >
         }
         ```
+
+## How to run locally
+
+### First, get the following if you haven't already:
+- PHP
+- npm
+- Docker
+
+### Second, set up the `.env` files of the backend and frontend
+1. Find the `.env.example` file inside the `backend` directory. Copy and paste the file inside the same directory and rename it to `.env.local`.
+2. Find the `.env.example` file inside the `frontend` directory. Copy and paste the file inside the same directory and rename it to `.env`.
+
+### Third, start running the backend and database
+1. Start a terminal session with the project's root folder as the current working directory.
+2. Run this command: `docker compose up`
+3. Wait for the containers to finish initialization
+
+### Next, seed the database with dummy data
+1. Start a terminal session with the `backend` folder as the current working directory.
+2. Run these commands:
+    ```
+    php artisan db:seed --class=MembershipPlanSeeder
+    php artisan db:seed --class=ManagerSeeder
+    php artisan db:seed --class=EmployeeSeeder
+    php artisan db:seed --class=CustomerSeeder
+    ```
+
+### Now, run the frontend
+1. Start a terminal session with the `frontend` folder as the current working directory.
+2. Run these commands:
+    ```
+    npm install
+    npm run dev
+    ```
+
+### You can now visit the website to interact with the system
+Open a browser and paste this URL:
+```
+http://localhost:5173/GymSoftwareSystem/
+```

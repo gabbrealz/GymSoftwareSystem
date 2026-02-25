@@ -2,7 +2,7 @@ services:
   server:
     build:
       context: .
-      dockerfile: dev.dockerfile
+      dockerfile: dev.fast.dockerfile
     image: sertfit-dev-img
     container_name: sertfit-dev
     env_file:
